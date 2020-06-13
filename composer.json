@@ -1,0 +1,22 @@
+{
+  "name": "steph/simple-fw",
+  "description": "A simple PHP object-oriented framework",
+  "authors": [
+    {
+      "name": "Stéphane Devouard",
+      "email": "sdevouard@gmail.com"
+    }
+  ],
+  "require": {
+    "ext-pdo": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "framework\\": "lib/",
+      "app\\controllers\\": "app/controllers/",
+      "app\\models\\": "app/models/"
+    }
+  },
+  "require-dev": {
+  }
+}
