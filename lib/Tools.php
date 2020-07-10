@@ -115,19 +115,49 @@ class Tools
     return $messages;
   }
 
+  public static function getProperty(object $o, string $attribute)
+  {
+    $value = null;
+    $getter = "get" . ucfirst($attribute);
+    if (method_exists($o, $getter)) {
+      $value = $o->$getter();
+    }
+    return $value;
+  }
+
+  public static function setProperty(object $o, string $attribute, $value) : void
+  {
+    $setter = "set" . ucfirst($attribute);
+    if (method_exists($o, $setter)) {
+      $o->$setter($value);
+    }
+  }
+
   /**
    * Extract a key => value array
-   * from an associative array
+   * from an array of associative arrays or objects
    * @param array $list
    * @param string $valueField
    * @param string $labelField
    * @return array
    */
-  public static function select($list, $valueField, $labelField)
+  public static function select(array $list, string $valueField, string $labelField) : array
   {
     $select = [];
     foreach ($list as $item) {
-      $select[$item[$valueField]] = $item[$labelField];
+      $key = null;
+      $value = null;
+      if (is_array($item)) {
+        $key = $item[$valueField];
+        $value = $item[$labelField];
+      }
+      if (is_object($item)) {
+        $key = self::getProperty($item, $valueField);
+        $value = self::getProperty($item, $labelField);
+      }
+      if ($key != null && $value != null) {
+        $select[$key] = $value;
+      }
     }
 
     return $select;

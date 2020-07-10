@@ -8,27 +8,27 @@ class Router
   /**
    * @var string
    */
-  private $route;
+  private string $route;
 
   /**
    * @var string
    */
-  private $controllerName = "HomeController";
+  private string $controllerName = "HomeController";
 
   /**
    * @var string
    */
-  private $actionName = "indexAction";
+  private string $actionName = "indexAction";
 
   /**
    * @var string
    */
-  private $actionGet = "getIndex";
+  private string $actionGet = "getIndex";
 
   /**
    * @var string
    */
-  private $actionPost = "postIndex";
+  private string $actionPost = "postIndex";
 
   /**
    * @var array
@@ -38,12 +38,17 @@ class Router
   /**
    * @var array
    */
-  private $queryParams = [];
+  private array $queryParams = [];
 
   /**
    * @var array
    */
-  private $postData = [];
+  private array $postData = [];
+
+  /**
+   * @var string
+   */
+  private string $repositoryName = "HomeRepository";
 
   /**
    * Router constructor.
@@ -53,24 +58,26 @@ class Router
   {
     $this->route = $route;
 
-    $urlParts = explode("/", $route);
+    $routeParts = explode("/", $route);
 
-    if (count($urlParts) > 0 && !empty(trim($urlParts[0]))) {
-      $this->controllerName = Tools::pascalize(array_shift($urlParts)) . "Controller";
+    if (count($routeParts) > 0 && !empty(trim($routeParts[0]))) {
+      $entity = Tools::pascalize(array_shift($routeParts));
+      $this->controllerName = $entity . "Controller";
+      $this->repositoryName = $entity . "Repository";
     }
 
-    if (count($urlParts) > 0 && !empty(trim($urlParts[0]))) {
-      $action = array_shift($urlParts);
+    if (count($routeParts) > 0 && !empty(trim($routeParts[0]))) {
+      $action = array_shift($routeParts);
       $this->actionName = Tools::camelize($action) . "Action";
       $this->actionGet = "get" . Tools::pascalize($action);
       $this->actionPost = "post" . Tools::pascalize($action);
     }
 
-    if (count($urlParts) > 0 && !empty(trim($urlParts[0]))) {
+    if (count($routeParts) > 0 && !empty(trim($routeParts[0]))) {
       array_map(function ($item) {
         return urldecode($item);
-      }, $urlParts);
-      $this->actionParameters = $urlParts;
+      }, $routeParts);
+      $this->actionParameters = $routeParts;
     }
 
     $queryParams = $_GET;
@@ -147,6 +154,14 @@ class Router
   }
 
   /**
+   * @return string
+   */
+  public function getRepositoryName(): string
+  {
+    return $this->repositoryName;
+  }
+
+  /**
    * Generate a route URL
    * @param array $args
    * @param array $query
@@ -154,7 +169,7 @@ class Router
    */
   public static function route($args = [], $query = [])
   {
-    $url = "/"; // "index.php?route=";
+    $url = "/";
     if (count($args) > 0) {
       foreach ($args as $argK => $argV) {
         $args[$argK] = urlencode(trim($argV));

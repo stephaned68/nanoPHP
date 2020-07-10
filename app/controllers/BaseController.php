@@ -9,17 +9,17 @@ abstract class BaseController
   /**
    * @var View
    */
-  private $view;
+  private View $view;
 
   /**
    * @var array
    */
-  private $queryParams = [];
+  private array $queryParams = [];
 
   /**
    * @var array
    */
-  private $postData = [];
+  private array $postData = [];
 
   /**
    * @return View

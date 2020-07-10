@@ -2,8 +2,10 @@
 
 namespace framework;
 
+use Exception;
 use PDO;
 use PDOException;
+use PDOStatement;
 
 class Database
 {
@@ -11,7 +13,7 @@ class Database
   /**
    * @var PDO $pdo
    */
-  private static $pdo = null;
+  private static ?PDO $pdo = null;
 
   /**
    * Cannot instantiate -- Singleton
@@ -23,9 +25,14 @@ class Database
   /**
    * Return a PDO connection
    * @return PDO
+   * @throws Exception
    */
   public static function getPDO()
   {
+    if (!in_array(DB_TYPE, PDO::getAvailableDrivers(), true))
+    {
+      throw new Exception(DB_TYPE . " non disponible");
+    }
     if (!self::$pdo) {
       try {
         self::$pdo = new PDO(
@@ -38,7 +45,7 @@ class Database
           ]
         );
       } catch (PDOException $ex) {
-        Tools::setFlash($ex->getMessage(), "danger");
+        throw new Exception("Connexion impossible", 0, $ex);
       }
     }
     return self::$pdo;
@@ -48,6 +55,7 @@ class Database
    * Check if a table or view exists in the database
    * @param string $table
    * @return bool
+   * @throws Exception
    */
   public static function exists(string $table)
   {
@@ -59,7 +67,7 @@ class Database
       ->andWhere("table_name = '" . $table . "'");
 
     $exists = false;
-    $pdo = Database::getPDO();
+    $pdo = self::getPDO();
     if ($pdo) {
       try {
         $result = $pdo->query($qb->getQuery())->fetch();
@@ -72,34 +80,90 @@ class Database
   }
 
   /**
-   * Return the list of columns for a table
-   * @param string $table
-   * @return array
+   * Prepare and execute a SQL query with optional named parameters
+   * @param string $sqlQuery
+   * @param array $queryParams
+   * @return PDOStatement
+   * @throws Exception
    */
-  public static function getColumnsList(string $table)
+  public static function execute(string $sqlQuery, array $queryParams = []) : PDOStatement
   {
-    $qb = new QueryBuilder();
-    $qb
-      ->from("information_schema.columns")
-      ->select(["column_name"])
-      ->where("table_schema = '" . DB_NAME . "'")
-      ->andWhere("table_name = '" . $table . "'");
-
-    $columnsList = [];
-    $pdo = Database::getPDO();
-    if ($pdo) {
-      try {
-        $result = $pdo->query($qb->getQuery());
-        if ($result) {
-          $metaData = $result->fetchAll(PDO::FETCH_ASSOC);
-          foreach ($metaData as $meta) {
-            $columnsList[] = $meta["column_name"];
-          }
-        }
-      } catch (PDOException $ex) {
+    $statement = self::getPDO()->prepare($sqlQuery);
+    if (count($queryParams) > 0) {
+      foreach ($queryParams as $key => $value) {
+        if ($value != null)
+          $statement->bindValue($key, $value);
       }
     }
-    return $columnsList;
+    $statement->execute();
+    return $statement;
   }
 
+  /**
+   * Hydrate an entity object from a row of data
+   * @param object $entity
+   * @param array $data
+   * @param bool $isNew
+   * @return object
+   */
+  private static function hydrate(object $entity, array $data, $isNew = false)
+  {
+    $data["new"] = $isNew;
+
+    foreach($data as $key => $value)
+    {
+      $setter = "set" . Tools::pascalize($key);
+      if (method_exists($entity, $setter)) {
+        $entity->$setter($value);
+      }
+    }
+
+    return $entity;
+  }
+
+  /**
+   * Get a single entity
+   * @param PDOStatement $stmt
+   * @param string $className
+   * @return object
+   */
+  public static function fetchEntity(PDOStatement $stmt, string $className) : ?object
+  {
+    $row = $stmt->fetch();
+    if ($row) {
+      return self::hydrate(new $className(), $row);
+    }
+    else {
+      return null;
+    }
+  }
+
+  /**
+   * Get a list of entities
+   * @param PDOStatement $stmt
+   * @param string $className
+   * @return array
+   */
+  public static function fetchEntities(PDOStatement $stmt, string $className) : array
+  {
+    $entities = [];
+    $rows = $stmt->fetchAll();
+    foreach ($rows as $row) {
+      $entities[] = self::hydrate(new $className(), $row);
+    }
+    return $entities;
+  }
+
+  public static function entityToArray(object $entity) : array
+  {
+    $data = [];
+    foreach (get_class_methods($entity) as $accessor)
+    {
+      if (substr($accessor, 0, 3) == "get") {
+        $column = Tools::snakeCase(substr($accessor, 3));
+        $data[$column] = $entity->$accessor();
+      }
+    }
+    return $data;
+  }
 }

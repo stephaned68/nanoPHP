@@ -2,6 +2,7 @@
 
 namespace framework;
 
+use Exception;
 use PDO;
 use PDOStatement;
 
@@ -58,9 +59,25 @@ class QueryBuilder
   private int $offset = -1;
 
   /**
+   * @var array
+   */
+  private array $insertValues = [];
+
+  /**
+   * @var array
+   */
+  private array $updateValues = [];
+
+  /**
+   * @var array
+   */
+  private array $deleteKeys = [];
+
+  /**
    * QueryBuilder constructor.
    * @param string $table
    * @param string|null $alias
+   * @throws Exception
    */
   public function __construct(string $table = null, string $alias = null)
   {
@@ -114,7 +131,7 @@ class QueryBuilder
    */
   public function andWhere(string $where)
   {
-    return $this->where("and {$where}");
+    return $this->where("AND {$where}");
   }
 
   /**
@@ -124,7 +141,7 @@ class QueryBuilder
    */
   public function orWhere(string $where)
   {
-    return $this->where("or {$where}");
+    return $this->where("OR {$where}");
   }
 
   /**
@@ -151,7 +168,7 @@ class QueryBuilder
     if (strpos($orderByDesc, ".") == 0) {
       $orderByDesc = $this->alias ?? $this->table . "." . $orderByDesc;
     }
-    return $this->orderBy("desc {$orderByDesc}");
+    return $this->orderBy("DESC {$orderByDesc}");
   }
 
   /**
@@ -194,7 +211,7 @@ class QueryBuilder
     string $foreignKey,
     string $alias = null)
   {
-    return $this->join("inner", $table, $primaryKey, $foreignKey, $alias);
+    return $this->join("INNER", $table, $primaryKey, $foreignKey, $alias);
   }
 
   /**
@@ -211,7 +228,7 @@ class QueryBuilder
     string $foreignKey,
     string $alias)
   {
-    return $this->join("left", $table, $primaryKey, $foreignKey, $alias);
+    return $this->join("LEFT", $table, $primaryKey, $foreignKey, $alias);
   }
 
   /**
@@ -243,14 +260,57 @@ class QueryBuilder
   /**
    * Add the LIMIT and OFFSET clause
    * @param int $limit
-   * @param int|null $offset
+   * @param int $offset
    * @return $this
    */
-  public function limit(int $limit, ?int $offset = null)
+  public function limit(int $limit, int $offset = -1)
   {
     $this->limit = $limit;
     $this->offset = $offset;
     return $this;
+  }
+
+  /**
+   * Add a WHERE ... IN (...) clause
+   * @param string $where
+   * @param $in
+   * @return $this
+   */
+  public function in(string $where, $in)
+  {
+    $inValues = $in;
+    if (is_array($in)) {
+      $inValues = "(" . implode(", ", $in) . ")";
+    }
+    if (is_object($in)) {
+      if (get_class($in) == "QueryBuilder") {
+        $inValues = $in->getSubQuery();
+      }
+    }
+    $this->where[] = "$where IN $inValues";
+    return $this;
+  }
+
+  /**
+   * Add a OR ... IN (...) WHERE clause
+   * @param string $where
+   * @param $in
+   * @return $this
+   */
+  public function orIn(string $where, $in)
+  {
+    return $this->in(" OR $where", $in);
+  }
+
+  /**
+   * Add a AND ... IN (...) WHERE clause
+   * @param string $where
+   * @param $in
+   * @return $this
+   */
+  public function andIn(string $where, $in)
+  {
+    return $this->in(" AND $where", $in);
   }
 
   /**
@@ -261,28 +321,28 @@ class QueryBuilder
   {
     $sql = [];
 
-    $sql[] = "select " . implode(", ", $this->fields);
-    $sql[] = "from " . implode(", ", $this->table);
+    $sql[] = "SELECT " . implode(", ", $this->fields);
+    $sql[] = "FROM " . implode(", ", $this->table);
     if (count($this->joins) > 0) {
       foreach ($this->joins as $join) {
-        $sql[] = "{$join["type"]} join {$join["table"]}"
-          . (($join["alias"] != null) ? " as {$join["alias"]}" : "")
-          . " on {$join["fk"]} = {$join["pk"]}";
+        $sql[] = "{$join["type"]} JOIN {$join["table"]}"
+          . (($join["alias"] != null) ? " AS {$join["alias"]}" : "")
+          . " ON {$join["fk"]} = {$join["pk"]}";
       }
     }
     if (count($this->where) > 0) {
-      $sql[] = "where " . implode(" ", $this->where);
+      $sql[] = "WHERE " . implode(" ", $this->where);
     }
     if (count($this->groupBy) > 0) {
-      $sql[] = "group by " . implode(", ", $this->groupBy);
+      $sql[] = "GROUP BY " . implode(", ", $this->groupBy);
     }
     if (count($this->orderBy) > 0) {
-      $sql[] = "order by " . implode(", ", $this->orderBy);
+      $sql[] = "ORDER BY " . implode(", ", $this->orderBy);
     }
     if ($this->limit > 0) {
-      $sql[] = "limit {$this->limit}";
+      $sql[] = "LIMIT {$this->limit}";
       if ($this->offset > -1) {
-        $sql[] = "offset {$this->offset}";
+        $sql[] = "OFFSET {$this->offset}";
       }
     }
 
@@ -290,22 +350,143 @@ class QueryBuilder
   }
 
   /**
+   * Return as a sub-query
+   * @return string
+   */
+  public function getSubQuery()
+  {
+    return "(" . $this->getQuery() . ")";
+  }
+
+  /**
    * Prepare and return a PDO statement
    * @param array $params
+   * @param string $sqlQuery
    * @return bool|PDOStatement
+   * @throws Exception
    */
-  public function prepare(array $params = [])
+  public function execute(string $sqlQuery = null, array $params = [])
   {
+    if ($sqlQuery == null)
+      $sqlQuery = $this->getQuery();
+
     if (count($params) == 0) {
       $params = $this->params;
     }
-    $statement = $this->pdo->prepare($this->getQuery());
-    if (count($params) > 0) {
-      foreach ($params as $key => $value) {
-        $statement->bindValue($key, $value);
+
+    return Database::execute($sqlQuery, $params);
+  }
+
+  /**
+   * Pass data to insert
+   * @param array $values
+   * @return $this
+   */
+  public function insert(array $values) : QueryBuilder
+  {
+
+    $this->insertValues = $values;
+    return $this;
+  }
+
+  /**
+   * Pass data to update
+   * @param array $values
+   * @return $this
+   */
+  public function update(array $values) : QueryBuilder
+  {
+    $this->updateValues = $values;
+    return $this;
+  }
+
+  /**
+   * Pass primary key(s) to delete
+   * @param array $keys
+   * @return $this
+   */
+  public function delete(array $keys) : QueryBuilder
+  {
+    $this->deleteKeys = $keys;
+    return $this;
+  }
+
+  private function insertQuery() : string
+  {
+    $sql = [];
+
+    $sql[] = "INSERT INTO " . $this->table[0];
+    $columns = [];
+    $values = [];
+    foreach ($this->insertValues as $column => $value) {
+      if ($value != null) {
+        $columns[] = $column;
+        $values[] = ":" . $column;
       }
     }
-    $statement->execute();
-    return $statement;
+    $sql[] = "(" . implode(", ", $columns). ")";
+    $sql[] = "VALUES (" . implode(", ", $values) . ")";
+
+    return implode(" ", $sql);
   }
+
+  private function updateQuery() : string
+  {
+    $sql = [];
+
+    $sql[] = "UPDATE " . $this->table[0] . " SET";
+    $values = [];
+    foreach ($this->updateValues as $column => $value) {
+      $values[] = $column . " = :" . $column;
+    }
+    $sql[] = implode(", ", $values);
+    if (count($this->where) > 0) {
+      $sql[] = "WHERE " . implode(" ", $this->where);
+    }
+
+    return implode(" ", $sql);
+  }
+
+  private function deleteQuery() : string
+  {
+    $sql = [];
+
+    $sql[] = "DELETE FROM " . $this->table[0];
+    if (count($this->where) > 0) {
+      $sql[] = "WHERE " . implode(" ", $this->where);
+    }
+
+    return implode(" ", $sql);
+  }
+
+  /**
+   * Generate and execute an INSERT / UPDATE / DELETE query
+   * @return PDOStatement
+   * @throws Exception
+   */
+  public function commit()
+  {
+    $inserts = count($this->insertValues);
+    $updates = count($this->updateValues);
+    $deletes = count($this->deleteKeys);
+
+    if ($inserts == 0 && $updates == 0 && $deletes == 0)
+      throw new Exception("Nothing to commit");
+
+    if ($inserts > 0 && $updates == 0 && $deletes == 0) {
+      return $this->execute($this->insertQuery(), $this->insertValues);
+    }
+
+    if ($inserts == 0 && $updates > 0 && $deletes == 0) {
+      return $this->execute($this->updateQuery(), $this->updateValues);
+    }
+
+    if ($inserts == 0 && $updates == 0 && $deletes > 0) {
+      var_dump($this->deleteQuery());
+      return $this->execute($this->deleteQuery(), $this->deleteKeys);
+    }
+
+    return null;
+  }
+
 }

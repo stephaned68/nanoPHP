@@ -101,10 +101,9 @@ use framework\Tools;
       <button type="button" class="close"></button>
     </div>
   <?php endif ?>
-</div>
 
-<div class="row justify-content-center">
   <?= $content ?>
+
 </div>
 
 <script src="/assets/jquery/dist/jquery.slim.js"></script>
@@ -114,13 +113,13 @@ use framework\Tools;
 <script src="/assets/jquery-confirm/dist/jquery-confirm.min.js"></script>
 <script src="https://kit.fontawesome.com/fff1f19af2.js"></script>
 
-<script src="/js/utils.js"></script>
+<script src="/scripts/utils.js"></script>
 
+<?php if (isset($script)) : ?>
 <script>
-  <?php if ($script) : ?>
   <?php include $script ?>
-  <?php endif; ?>
 </script>
+<?php endif; ?>
 
 </body>
 </html>

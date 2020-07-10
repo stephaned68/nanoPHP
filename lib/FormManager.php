@@ -121,22 +121,22 @@ class FormManager
    */
   public function addField($props)
   {
-    $field = new FormField();
-    $field
-      ->setName($props["name"] ?? "")
-      ->setLabel($props["label"] ?? $props["name"])
-      ->setFilter($props["filter"] ?? FILTER_SANITIZE_STRING)
-      ->setRequired($props["required"] ?? false)
-      ->setDefaultValue($props["defaultValue"] ?? "")
-      ->setErrorMessage($props["errorMessage"] ?? ($props['label'] ?? $props["name"]) . " non saisi(e)")
-      ->setControlType($props["controlType"] ?? "text")
-      ->setCssClass($props["cssClass"] ?? FormField::getDefaultCSS($field->getControlType()))
-      ->setPrimeKey($props["primeKey"] ?? false)
-      ->setValueList($props["valueList"] ?? [])
-      ->setSize($props["size"] ?? []);
-
-    $this->formFields[$props["name"]] = $field;
-
+    if (is_array($props)) {
+      $field = new FormField();
+      $field
+        ->setName($props["name"] ?? "")
+        ->setLabel($props["label"] ?? $props["name"])
+        ->setFilter($props["filter"] ?? FILTER_SANITIZE_STRING)
+        ->setRequired($props["required"] ?? false)
+        ->setDefaultValue($props["defaultValue"] ?? "")
+        ->setErrorMessage($props["errorMessage"] ?? ($props['label'] ?? $props["name"]) . " non saisi(e)")
+        ->setControlType($props["controlType"] ?? "text")
+        ->setCssClass($props["cssClass"] ?? FormField::getDefaultCSS($field->getControlType()))
+        ->setPrimeKey($props["primeKey"] ?? false)
+        ->setValueList($props["valueList"] ?? [])
+        ->setSize($props["size"] ?? []);
+      $this->formFields[$props["name"]] = $field;
+    }
     return $this;
   }
 
@@ -171,7 +171,7 @@ class FormManager
       $fieldValue = filter_input(INPUT_POST, $field->getName(), $field->getFilter());
       if (trim($fieldValue) === "") {
         if ($field->isPrimeKey() || $field->isRequired()) {
-          array_push($errorList, $field->getErrorMessage());
+          $errorList[] = $field->getErrorMessage();
         }
       }
     }
@@ -197,6 +197,24 @@ class FormManager
     }
 
     return $formData;
+  }
+
+  /**
+   * Convert POSTed data to an entity object
+   * @param string $className
+   * @return object
+   */
+  public function getEntity(string $className) : object
+  {
+    $entity = new $className();
+
+    foreach ($this->getData() as $field => $value) {
+      $setter = "set" . Tools::pascalize($field);
+      if (method_exists($entity, $setter))
+        $entity->$setter($value);
+    }
+
+    return $entity;
   }
 
   /**

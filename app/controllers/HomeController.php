@@ -2,15 +2,64 @@
 
 namespace app\controllers;
 
-use app\models\Contact;
 use framework\FormManager;
+use framework\SchemaBuilder;
 
 class HomeController extends BaseController
 {
 
   public function indexAction()
   {
-    $this->render("home/index", []);
+    $categories = new SchemaBuilder("categories");
+    $categories
+      ->identity([
+        "name" => "category_id",
+        "type" => "int"
+      ])
+      ->column([
+        "name" => "category_name",
+        "type" => "varchar",
+        "size" => "50",
+        "null" => false
+      ])
+    ;
+    $categories->create(true);
+
+    $contacts = new SchemaBuilder("contacts");
+    $contacts
+      ->identity([
+        "name" => "contact_id",
+        "type" => "int"
+      ])
+      ->column([
+        "name" => "contact_name",
+        "type" => "varchar",
+        "size" => "50",
+        "null" => false
+      ])
+      ->column([
+        "name" => "contact_email",
+        "type" => "varchar",
+        "size" => "100",
+        "null" => true
+      ])
+      ->column([
+        "name" => "category_id",
+        "type" => "int",
+        "size" => "11",
+        "null" => false
+      ])
+      ->foreignKey([
+        "name" => "fk_contact_category",
+        "column" => "category_id",
+        "ref" => "category_id",
+        "table" => "categories",
+        "update" => "CASCADE"
+      ])
+    ;
+    $contacts->create(true);
+
+    $this->render("home/index");
   }
 
   private function getEditForm()
@@ -24,10 +73,20 @@ class HomeController extends BaseController
         "primeKey" => true
       ])
       ->addField([
-        "name" => "name",
+        "name" => "contactName",
         "label" => "Nom du contact",
         "required" => true
-      ]);
+      ])
+      ->addField([
+        "name" => "contactEmail",
+        "label" => "Email du contact"
+      ])
+      ->addField([
+        "name" => "categoryId",
+        "label" => "Catégorie de contact",
+        "required" => true
+      ])
+    ;
     return $editForm;
   }
 
@@ -42,13 +101,6 @@ class HomeController extends BaseController
   public function postEdit()
   {
     $editForm = $this->getEditForm();
-
-    Contact::configure();
-    $contact = new Contact($editForm->getData());
-    var_dump($contact);
-
-    $test = Contact::findByName("Stéphane");
-    var_dump($test);
   }
 
 }

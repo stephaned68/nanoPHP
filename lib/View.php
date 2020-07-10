@@ -11,17 +11,24 @@ class View
   private $layout;
 
   /**
+   * @var object
+   */
+  private ?object $viewModel;
+
+  /**
    * @var array
    */
-  private $data = [];
+  private array $data = [];
 
   /**
    * View constructor.
    * @param string $layout
+   * @param object $viewModel
    */
-  public function __construct(string $layout = VIEWS_LAYOUT)
+  public function __construct(string $layout = VIEWS_LAYOUT, object $viewModel = null)
   {
     $this->layout = $layout;
+    $this->viewModel = $viewModel;
   }
 
   /**
@@ -39,6 +46,24 @@ class View
   public function setLayout(string $layout): View
   {
     $this->layout = $layout;
+    return $this;
+  }
+
+  /**
+   * @return object
+   */
+  public function getViewModel(): object
+  {
+    return $this->viewModel;
+  }
+
+  /**
+   * @param object $viewModel
+   * @return View
+   */
+  public function setViewModel(object $viewModel): View
+  {
+    $this->viewModel = $viewModel;
     return $this;
   }
 
@@ -82,6 +107,11 @@ class View
     if (count($data) > 0) {
       $this->data = array_merge($this->data, $data);
     }
+
+    if ($this->viewModel != null) {
+      $this->data[] = [ "model" => $this->viewModel ];
+    }
+
     ob_start();
 
     extract($this->data);

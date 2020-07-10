@@ -2,36 +2,59 @@
 
 namespace framework;
 
+use Error;
+use Exception;
+
 class Dispatcher
 {
   /**
    * @var Router
    */
-  private $router;
+  private Router $router;
 
   /**
    * @var string
    */
-  private $nameSpace;
+  private string $ctrlNameSpace;
+
+  private string $modelNameSpace;
 
   /**
    * Dispatcher constructor.
    * @param Router $router
-   * @param string $nameSpace
+   * @param string $ctrlNameSpace
+   * @param string $modelNameSpace
    */
-  public function __construct(Router $router, string $nameSpace = "")
+  public function __construct(
+    Router $router,
+    string $ctrlNameSpace = "",
+    string $modelNameSpace = ""
+  )
   {
     $this->router = $router;
-    $this->nameSpace = $nameSpace;
+    $this->ctrlNameSpace = $ctrlNameSpace;
+    $this->modelNameSpace = $modelNameSpace;
   }
 
   /**
    * Call the action method on the controller
+   * @throws Exception
    */
   public function run()
   {
-    $className = $this->nameSpace . $this->router->getControllerName();
-    $controllerInstance = new $className();
+    $controllerClass = $this->ctrlNameSpace . $this->router->getControllerName();
+    $repositoryClass = $this->modelNameSpace . $this->router->getRepositoryName();
+
+    $repositoryInstance = null;
+    if (class_exists($repositoryClass))
+      $repositoryInstance = new $repositoryClass();
+
+    try {
+      $controllerInstance = new $controllerClass($repositoryInstance);
+    }
+    catch (Error $ex) {
+      throw new Exception("Route error - " . $ex->getMessage(), 404);
+    }
 
     if (is_subclass_of($controllerInstance, "app\controllers\BaseController")) {
       $controllerInstance->setView();
