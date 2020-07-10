@@ -112,10 +112,7 @@ class Database
 
     foreach($data as $key => $value)
     {
-      $setter = "set" . Tools::pascalize($key);
-      if (method_exists($entity, $setter)) {
-        $entity->$setter($value);
-      }
+      Tools::setProperty($entity, Tools::pascalize($key), $value);
     }
 
     return $entity;
@@ -154,6 +151,11 @@ class Database
     return $entities;
   }
 
+  /**
+   * Convert an entity object to an associative array
+   * @param object $entity
+   * @return array
+   */
   public static function entityToArray(object $entity) : array
   {
     $data = [];

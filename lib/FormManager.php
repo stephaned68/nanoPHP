@@ -209,9 +209,7 @@ class FormManager
     $entity = new $className();
 
     foreach ($this->getData() as $field => $value) {
-      $setter = "set" . Tools::pascalize($field);
-      if (method_exists($entity, $setter))
-        $entity->$setter($value);
+      Tools::setProperty($entity, Tools::pascalize($field), $value);
     }
 
     return $entity;

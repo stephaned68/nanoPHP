@@ -104,9 +104,7 @@ abstract class BaseRepository
       $statement = $qb->insert($data)->commit();
       $rows += $statement->rowCount();
       if ($this->generatedPK) {
-        $pkSetter = "set" . Tools::pascalize($this->pkColumns[0]);
-        if (method_exists($entity, $pkSetter))
-          $entity->$pkSetter(Database::getPDO()->lastInsertId());
+        Tools::setProperty($entity, Tools::pascalize($this->pkColumns[0]), Database::getPDO()->lastInsertId());
       }
     } catch (Exception $e) {
       throw new Exception($e->getMessage());
@@ -167,9 +165,7 @@ abstract class BaseRepository
       $inserted = ($nulls == count($this->pkColumns));
     }
     else {
-      $newGetter = "isNew";
-      if (method_exists($entity, $newGetter))
-        $inserted = $entity->$newGetter();
+      $inserted = Tools::getProperty($entity, "isNew");
     }
 
     if ($inserted) {
@@ -193,9 +189,7 @@ abstract class BaseRepository
 
     $keys = [];
     foreach ($this->pkColumns as $pkColumn) {
-      $getter = "get" . Tools::pascalize($pkColumn);
-      if (method_exists($entity, $getter))
-        $keys[$pkColumn] = $entity->$getter();
+      $keys[$pkColumn] = Tools::getProperty($entity, Tools::pascalize($pkColumn));
     }
 
     try {

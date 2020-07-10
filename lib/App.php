@@ -107,8 +107,8 @@ class App
 
     $this->dispatcher = new Dispatcher(
       $this->router,
-      implode(DIRECTORY_SEPARATOR, [ "app", "controllers" ]),
-      implode(DIRECTORY_SEPARATOR, [ "app", "models" ])
+      implode(DIRECTORY_SEPARATOR, [ "app", "controllers", "" ]),
+      implode(DIRECTORY_SEPARATOR, [ "app", "models", "" ])
     );
   }
 

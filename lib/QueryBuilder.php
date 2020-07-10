@@ -411,6 +411,10 @@ class QueryBuilder
     return $this;
   }
 
+  /**
+   * Build an INSERT query
+   * @return string
+   */
   private function insertQuery() : string
   {
     $sql = [];
@@ -430,6 +434,10 @@ class QueryBuilder
     return implode(" ", $sql);
   }
 
+  /**
+   * Build an UPDATE query
+   * @return string
+   */
   private function updateQuery() : string
   {
     $sql = [];
@@ -447,6 +455,10 @@ class QueryBuilder
     return implode(" ", $sql);
   }
 
+  /**
+   * Build a DELETE query
+   * @return string
+   */
   private function deleteQuery() : string
   {
     $sql = [];

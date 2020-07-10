@@ -115,6 +115,12 @@ class Tools
     return $messages;
   }
 
+  /**
+   * Return an attribute value from an object
+   * @param object $o
+   * @param string $attribute
+   * @return mixed|null
+   */
   public static function getProperty(object $o, string $attribute)
   {
     $value = null;
@@ -125,6 +131,12 @@ class Tools
     return $value;
   }
 
+  /**
+   * Set an attribute value
+   * @param object $o
+   * @param string $attribute
+   * @param $value
+   */
   public static function setProperty(object $o, string $attribute, $value) : void
   {
     $setter = "set" . ucfirst($attribute);

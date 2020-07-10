@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\CategoryRepository;
 use framework\FormManager;
 use framework\SchemaBuilder;
 
@@ -58,6 +59,9 @@ class HomeController extends BaseController
       ])
     ;
     $contacts->create(true);
+
+    $categoryDAO = new CategoryRepository();
+    var_dump($categoryDAO->getAll());
 
     $this->render("home/index");
   }
