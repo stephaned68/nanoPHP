@@ -168,4 +168,100 @@ class Database
     }
     return $data;
   }
+
+  public static function createMigrationsTable()
+  {
+    $migrations = new SchemaBuilder("migrations");
+    $migrations
+      ->identity([
+        "name" => "migration_id",
+        "type" => "int"
+      ])
+      ->column([
+        "name" => "migration_name",
+        "type" => "varchar",
+        "size" => "250",
+        "null" => false
+      ])
+      ->column([
+        "name" => "description",
+        "type" => "text",
+        "null" => true
+      ])
+      ->column([
+        "name" => "executed_at",
+        "type" => "datetime",
+        "null" => true
+      ])
+    ;
+    return $migrations->create(true);
+  }
+
+  public static function getMigrations()
+  {
+    $migrationsDir = ROOT_PATH . "/data/migrations";
+    if (!file_exists($migrationsDir))
+      return;
+    if (!is_dir($migrationsDir))
+      return;
+
+    $migrationsList = [];
+
+    $migrations = scandir($migrationsDir);
+    if (count($migrations) > 0) {
+
+      // build the list of executed migrations
+      $executedMigrations = [];
+      $qb = new QueryBuilder("migrations");
+      $stmt = $qb
+        ->select(["migration_name"])
+        ->where("executed_at IS NOT NULL")
+        ->execute();
+      $qb = null;
+      foreach ($stmt->fetchAll() as $migration) {
+        $executedMigrations[] = $migration["migration_name"];
+      }
+
+      // build the list of migrations to execute
+      $migrationsList = [];
+      foreach ($migrations as $migration) {
+        if (substr($migration, -4) == ".php") {
+          if (!in_array($migration, $executedMigrations)) {
+            $migrationClass = "app\\migrations\\" . str_replace(".php", "", $migration);
+            $migrationsList[$migration] = new $migrationClass();
+          }
+        }
+      }
+    }
+    return $migrationsList;
+  }
+
+  public static function migrate(array $migrationsList = [])
+  {
+    if (count($migrationsList) == 0)
+      $migrationsList = Database::getMigrations();
+
+    $migrations = [];
+
+    foreach ($migrationsList as $migrationName => $migrationInstance) {
+      $migration = $migrationInstance->getDescription();
+      $result = $migrationInstance->execute();
+      if ($result == true) {
+        $qb = new QueryBuilder("migrations");
+        $qb->insert([
+          "migration_name" => $migrationName,
+          "description" => $migrationInstance->getDescription(),
+          "executed_at" => date("Y-m-d")
+        ])->commit();
+        $qb = null;
+        $migration .= " : Ok";
+      }
+      else {
+        $migration .= " : " . $result;
+      }
+      $migrations[] = $migration;
+    }
+
+    return $migrations;
+  }
 }

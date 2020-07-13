@@ -1,0 +1,24 @@
+[
+  {
+    "label": "Menu",
+    "options": [
+      {
+        "label": "Catégories",
+        "route": [ "category", "index" ]
+      },
+      {
+        "label": "Contacts",
+        "route": [ "contact", "index" ]
+      }
+    ]
+  },
+  {
+    "label": "Aide",
+    "options": [
+      {
+        "label": "A propos",
+        "route": [ "about" ]
+      }
+    ]
+  }
+]

@@ -1,6 +1,6 @@
 {
-  "name": "steph/simple-fw",
-  "description": "A simple PHP object-oriented framework",
+  "name": "steph/nano-php",
+  "description": "A light-weight, object-oriented application framework using PHP 7 and the MVC pattern",
   "authors": [
     {
       "name": "Stéphane Devouard",
@@ -8,13 +8,15 @@
     }
   ],
   "require": {
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "ext-json": "*"
   },
   "autoload": {
     "psr-4": {
       "framework\\": "lib/",
       "app\\controllers\\": "app/controllers/",
-      "app\\models\\": "app/models/"
+      "app\\models\\": "app/models/",
+      "app\\migrations\\": "data/migrations/"
     }
   },
   "require-dev": {

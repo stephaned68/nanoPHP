@@ -3,6 +3,13 @@
 use framework\Router;
 use framework\Tools;
 
+$navBar = json_decode(file_get_contents(CONFIG_PATH . DIRECTORY_SEPARATOR . "menu.json"), true);
+
+$navOff = "";
+if (isset($migrations)) {
+  $navOff = count($migrations) > 0 ? " disabled" : "";
+}
+
 ?>
 <!doctype html>
 <html lang="fr">
@@ -19,37 +26,36 @@ use framework\Tools;
 <body class="container-fluid">
 <header class="card-header row">
   <div class="col-4">
-    <h3 title="<?= DSN ?>"><?= APP_NAME ?></h3>
+    <a class="btn btn-outline-light text-primary" href="<?= Router::route([ "home" ]) ?>">
+      <h3 title="<?= DSN ?>"><?= APP_NAME ?></h3>
+    </a>
+    <?php if ($navOff != "") : ?>
+    <a class="text-warning" href="/migration" title="Mises à jour en attente...">
+      <i class="fa fa-2x fa-exclamation-circle"></i>
+    </a>
+    <?php endif; ?>
   </div>
   <div class="col-4 text-center">
-    <?php if (isset($fm)) : ?>
-      <h3><?= $fm->getTitle() ?></h3>
+    <?php if (isset($form)) : ?>
+      <h3><?= $form->getTitle() ?></h3>
     <?php else : ?>
       <h3><?= $title ?? "" ?></h3>
     <?php endif; ?>
   </div>
   <div class="col-4 text-right">
     <ul class="nav nav-pills">
+      <?php foreach ($navBar as $navMenu) : ?>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown">
-          Menu 1
+          <?= $navMenu["label"] ?>
         </a>
         <div class="dropdown-menu">
-          <a class="dropdown-item" href="<?= Router::route(['route.1.1']) ?>">SubMenu 1.1</a>
-          <a class="dropdown-item" href="<?= Router::route(['route.1.2']) ?>">SubMenu 1.2</a>
-          <a class="dropdown-item" href="<?= Router::route(['route.1.3']) ?>">SubMenu 1.3</a>
+          <?php foreach ($navMenu["options"] as $navOption) : ?>
+          <a class="dropdown-item<?= $navOff ?>" href="<?= Router::route($navOption['route']) ?>"><?= $navOption["label"] ?></a>
+          <?php endforeach; ?>
         </div>
       </li>
-      <li class="nav-item">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown">
-          Menu 2
-        </a>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="<?= Router::route(['route.2.1']) ?>">SubMenu 2.1</a>
-          <a class="dropdown-item" href="<?= Router::route(['route.2.2']) ?>">SubMenu 2.2</a>
-          <a class="dropdown-item" href="<?= Router::route(['route.2.3']) ?>">SubMenu 2.3</a>
-        </div>
-      </li>
+      <?php endforeach; ?>
     </ul>
   </div>
 </header>

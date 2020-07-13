@@ -35,9 +35,10 @@ class App
    */
   public function __construct()
   {
-    if (file_exists("app.conf")) {
+    $configFile = CONFIG_PATH . DIRECTORY_SEPARATOR . "app.conf";
+    if (file_exists($configFile)) {
       // load database configuration
-      $this->config = parse_ini_file("app.conf", true);
+      $this->config = parse_ini_file($configFile, true);
     } else {
       // set default database configuration
       $this->config = [
@@ -105,11 +106,7 @@ class App
 
     $this->router = new Router($route);
 
-    $this->dispatcher = new Dispatcher(
-      $this->router,
-      implode(DIRECTORY_SEPARATOR, [ "app", "controllers", "" ]),
-      implode(DIRECTORY_SEPARATOR, [ "app", "models", "" ])
-    );
+    $this->dispatcher = new Dispatcher($this->router);
   }
 
   /**

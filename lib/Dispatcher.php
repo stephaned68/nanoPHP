@@ -13,27 +13,12 @@ class Dispatcher
   private Router $router;
 
   /**
-   * @var string
-   */
-  private string $ctrlNameSpace;
-
-  private string $modelNameSpace;
-
-  /**
    * Dispatcher constructor.
    * @param Router $router
-   * @param string $ctrlNameSpace
-   * @param string $modelNameSpace
    */
-  public function __construct(
-    Router $router,
-    string $ctrlNameSpace = "",
-    string $modelNameSpace = ""
-  )
+  public function __construct(Router $router)
   {
     $this->router = $router;
-    $this->ctrlNameSpace = $ctrlNameSpace;
-    $this->modelNameSpace = $modelNameSpace;
   }
 
   /**
@@ -42,8 +27,8 @@ class Dispatcher
    */
   public function run()
   {
-    $controllerClass = $this->ctrlNameSpace . $this->router->getControllerName();
-    $repositoryClass = $this->modelNameSpace . $this->router->getRepositoryName();
+    $controllerClass = "app\\controllers\\" . $this->router->getControllerName();
+    $repositoryClass = "app\\models\\" . $this->router->getRepositoryName();
 
     $repositoryInstance = null;
     if (class_exists($repositoryClass))
