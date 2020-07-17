@@ -8,22 +8,22 @@ class FormManager
   /**
    * @var string
    */
-  private $title;
+  private string $title;
 
   /**
    * @var array
    */
-  private $formFields;
+  private array $formFields;
 
   /**
    * @var string
    */
-  private $indexRoute;
+  private string $indexRoute;
 
   /**
    * @var string
    */
-  private $deleteRoute;
+  private string $deleteRoute;
 
   /**
    * @return string
@@ -101,7 +101,7 @@ class FormManager
    * @param array $submits
    * @return bool
    */
-  public static function isSubmitted($submits = ["submit", "close"])
+  public static function isSubmitted($submits = [ "submitButton", "closeButton" ])
   {
     $submitted = false;
     foreach ($submits as $submit) {
@@ -193,7 +193,7 @@ class FormManager
       if ($field->getControlType() === "checkbox") {
         $fieldValue = $fieldValue ?? "0";
       }
-      $formData[$fieldName] = addslashes($fieldValue);
+      $formData[$fieldName] = $fieldValue;
     }
 
     return $formData;
@@ -218,30 +218,29 @@ class FormManager
   /**
    * Generate HTML chunk for field
    * @param FormField $field
-   * @param $data
+   * @param object $entity
    * @return false|string
    */
-  private function renderHTML(FormField $field, $data)
+  private function renderHTML(FormField $field, ?object $entity)
   {
     $name = $field->getName();
     $value = null;
-    if (array_key_exists($name, $data)) {
-      $value = $data[$name];
-    }
+    if ($entity != null)
+      $value = Tools::getProperty($entity, Tools::pascalize($name));
     return $field->render($value);
   }
 
   /**
    * Render all fields in the form
-   * @param array $data
+   * @param object $entity
    * @return string
    */
-  public function render($data = [])
+  public function render(?object $entity)
   {
     $formHTML = "";
 
     foreach ($this->formFields as $field) {
-      $formHTML .= $this->renderHTML($field, $data) . "\n";
+      $formHTML .= $this->renderHTML($field, $entity) . "\n";
     }
 
     return $formHTML;
@@ -250,16 +249,16 @@ class FormManager
   /**
    * Render a field by its name
    * @param $fieldName
-   * @param array $data
+   * @param $entity
    * @return false|string
    */
-  public function renderField($fieldName, $data = [])
+  public function renderField(string $fieldName, ?object $entity)
   {
     $formHTML = "";
 
     foreach ($this->formFields as $field) {
       if ($field->getName() === $fieldName) {
-        $formHTML = $this->renderHTML($field, $data);
+        $formHTML = $this->renderHTML($field, $entity);
         break;
       }
     }
@@ -269,18 +268,18 @@ class FormManager
 
   /**
    * Render the bottom buttons bar
-   * @param array $data
+   * @param object $entity
    * @return false|string
    */
-  public function renderButtons($data = [])
+  public function renderButtons(?object $entity)
   {
-    $empty = (count($data) == 0);
+    $empty = ($entity == null);
 
     if ($empty) {
-      $options["btnSubmit"] = "Ajouter";
-      $options["btnClose"] = "Ajouter & fermer";
+      $options["submitButton"] = "Ajouter";
+      $options["closeButton"] = "Ajouter & fermer";
     } else {
-      $options["btnClose"] = "Modifier";
+      $options["closeButton"] = "Valider";
     }
 
     if (!empty($this->indexRoute)) {

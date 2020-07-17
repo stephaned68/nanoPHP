@@ -321,7 +321,7 @@ class FormField
       "fieldValue" => $data ?? $this->defaultValue
     ];
 
-    if ($this->primeKey && $data) {
+    if ($this->primeKey && $data != null) {
       $options["fieldClass"] = "form-control-plaintext";
       $options["fieldReadonly"] = "readonly";
     }

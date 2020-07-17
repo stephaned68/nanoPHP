@@ -30,6 +30,11 @@ class Dispatcher
     $controllerClass = "app\\controllers\\" . $this->router->getControllerName();
     $repositoryClass = "app\\models\\" . $this->router->getRepositoryName();
 
+    $action = $this->router->getActionName(); // e.g. indexAction()
+
+    if ($action == "api")
+      $controllerClass = "app\\controllers\\" . $this->router->getApiController();
+
     $repositoryInstance = null;
     if (class_exists($repositoryClass))
       $repositoryInstance = new $repositoryClass();
@@ -47,18 +52,16 @@ class Dispatcher
       $controllerInstance->setPostData($this->router->getPostData());
     }
 
-    // Method is either <functionName>Action
-    $action = $this->router->getActionName(); // e.g. indexAction()
-    // or <httpVerb><functionName>
-    if ($_SERVER["REQUEST_METHOD"] == "GET") {
-      $method = $this->router->getActionGet(); // e.g. getIndex()
-    } elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
-      $method = $this->router->getActionPost(); // e.g. postIndex()
-    } else {
-      $method = $action;
+    if (is_subclass_of($controllerInstance, "app\controllers\ApiController")) {
+      $controllerInstance->setQueryParams($this->router->getQueryParams());
     }
-    if (method_exists($controllerInstance, $method)) {
-      $action = $method;
+
+    // Method is either <functionName>Action or api<httpVerb>
+    if ($action == "api") {
+      $method = "do" . ucfirst($_SERVER["REQUEST_METHOD"]);
+      if (method_exists($controllerInstance, $method)) {
+        $action = $method;
+      }
     }
 
     call_user_func_array(

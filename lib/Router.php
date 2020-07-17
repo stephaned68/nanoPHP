@@ -18,17 +18,12 @@ class Router
   /**
    * @var string
    */
+  private string $apiController;
+
+  /**
+   * @var string
+   */
   private string $actionName = "indexAction";
-
-  /**
-   * @var string
-   */
-  private string $actionGet = "getIndex";
-
-  /**
-   * @var string
-   */
-  private string $actionPost = "postIndex";
 
   /**
    * @var array
@@ -61,16 +56,24 @@ class Router
     $routeParts = explode("/", $route);
 
     if (count($routeParts) > 0 && !empty(trim($routeParts[0]))) {
-      $entity = Tools::pascalize(array_shift($routeParts));
-      $this->controllerName = $entity . "Controller";
-      $this->repositoryName = $entity . "Repository";
+      if (strtolower($routeParts[0]) == "api") {
+        array_shift($routeParts);
+        $this->actionName = "api";
+      }
     }
 
     if (count($routeParts) > 0 && !empty(trim($routeParts[0]))) {
-      $action = array_shift($routeParts);
-      $this->actionName = Tools::camelize($action) . "Action";
-      $this->actionGet = "get" . Tools::pascalize($action);
-      $this->actionPost = "post" . Tools::pascalize($action);
+      $entity = Tools::pascalize(array_shift($routeParts));
+      $this->controllerName = $entity . "Controller";
+      $this->apiController = Tools::pluralize($entity) . "Controller";
+      $this->repositoryName = $entity . "Repository";
+    }
+
+    if ($this->actionName != "api") {
+      if (count($routeParts) > 0 && !empty(trim($routeParts[0]))) {
+        $action = array_shift($routeParts);
+        $this->actionName = Tools::camelize($action) . "Action";
+      }
     }
 
     if (count($routeParts) > 0 && !empty(trim($routeParts[0]))) {
@@ -108,25 +111,17 @@ class Router
   /**
    * @return string
    */
+  public function getApiController(): string
+  {
+    return $this->apiController;
+  }
+
+  /**
+   * @return string
+   */
   public function getActionName()
   {
     return $this->actionName;
-  }
-
-  /**
-   * @return string
-   */
-  public function getActionGet(): string
-  {
-    return $this->actionGet;
-  }
-
-  /**
-   * @return string
-   */
-  public function getActionPost(): string
-  {
-    return $this->actionPost;
   }
 
   /**

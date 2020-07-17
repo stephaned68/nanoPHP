@@ -4,13 +4,13 @@
 
 <div class="row form-group">
   <div class="col text-left">
-    <?php if (isset($btnSubmit)) : ?>
-      <button type="submit" name="submit"
-              class="btn btn-primary"><?= $btnSubmit ?></button>
+    <?php if (isset($submitButton)) : ?>
+      <button type="submit" name="submitButton"
+              class="btn btn-primary"><?= $submitButton ?></button>
     <?php endif; ?>
-    <?php if (isset($btnClose)) : ?>
-      <button type="submit" name="close"
-              class="btn btn-primary"><?= $btnClose ?></button>
+    <?php if (isset($closeButton)) : ?>
+      <button type="submit" name="closeButton"
+              class="btn btn-primary"><?= $closeButton ?></button>
     <?php endif; ?>
     <?php if (isset($indexRoute)) : ?>
       <a class="text-dark" href="<?= $indexRoute ?>">Retour</a>

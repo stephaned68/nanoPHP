@@ -1,0 +1,37 @@
+<?php
+
+use framework\Router;
+
+?>
+
+<div class="col-md-4 mt-2">
+
+  <table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+      <th>Catégorie</th>
+      <th class="text-center">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($categories as $category) : ?>
+    <tr>
+      <td>
+        <a href="<?= Router::route([ "category", "edit", $category->getCategoryId() ]) ?>">
+          <?= $category->getCategoryName() ?>
+        </a>
+      </td>
+      <td class="text-center">
+        <a class="confirm-delete" href="<?= Router::route([ "category", "delete", $category->getCategoryId() ]) ?>">
+          <i class="fa fa-trash text-danger"></i>
+        </a>
+      </td>
+    </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
+
+  <a href="<?= Router::route([ "category", "edit" ]) ?>" class="btn btn-outline-success">
+    <i class="fa fa-edit"></i> Ajouter
+  </a>
+</div>

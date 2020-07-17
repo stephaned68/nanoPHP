@@ -2,7 +2,9 @@
 
 namespace app\models;
 
-class Category
+use JsonSerializable;
+
+class Category implements JsonSerializable
 {
   /**
    * @var int
@@ -50,5 +52,11 @@ class Category
     return $this;
   }
 
-
+  /**
+   * @return array|mixed
+   */
+  public function jsonSerialize()
+  {
+    return get_object_vars($this);
+  }
 }

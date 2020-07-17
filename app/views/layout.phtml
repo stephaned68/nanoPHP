@@ -20,8 +20,8 @@ if (isset($migrations)) {
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title><?= APP_NAME ?></title>
   <link rel="stylesheet" href="/assets/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="/assets/select2/dist/css/select2.min.css">
-  <link rel="stylesheet" href="/assets/jquery-confirm/dist/jquery-confirm.min.css">
 </head>
 <body class="container-fluid">
 <header class="card-header row">
@@ -37,9 +37,9 @@ if (isset($migrations)) {
   </div>
   <div class="col-4 text-center">
     <?php if (isset($form)) : ?>
-      <h3><?= $form->getTitle() ?></h3>
+      <h3 id="title"><?= $form->getTitle() ?></h3>
     <?php else : ?>
-      <h3><?= $title ?? "" ?></h3>
+      <h3 id="title"><?= $title ?? "" ?></h3>
     <?php endif; ?>
   </div>
   <div class="col-4 text-right">
@@ -107,17 +107,29 @@ if (isset($migrations)) {
       <button type="button" class="close"></button>
     </div>
   <?php endif ?>
+</div>
+
+<div class="row justify-content-center">
 
   <?= $content ?>
 
 </div>
 
+<!-- JS dependencies -->
 <script src="/assets/jquery/dist/jquery.slim.js"></script>
+
+<!-- Bootstrap 4 dependencies -->
 <script src="/assets/popper.js/dist/umd/popper.js"></script>
 <script src="/assets/bootstrap/dist/js/bootstrap.js"></script>
+
+<!-- select2 dependencies -->
 <script src="/assets/select2/dist/js/select2.min.js"></script>
-<script src="/assets/jquery-confirm/dist/jquery-confirm.min.js"></script>
-<script src="https://kit.fontawesome.com/fff1f19af2.js"></script>
+
+<!-- bootbox dependencies -->
+<script src="/assets/bootbox/dist/bootbox.all.min.js"></script>
+
+<!-- Fontawesome dependencies
+<script src="https://kit.fontawesome.com/fff1f19af2.js"></script> -->
 
 <script src="/scripts/utils.js"></script>
 

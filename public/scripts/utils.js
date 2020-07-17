@@ -33,24 +33,26 @@ function cleanText(text) {
 /**
  * Handle confirmation dialog for element deletion
  */
-function confirmDelete() {
-  $('.confirm-delete').confirm({
-    title: 'Confirmation requise !',
-    content: 'Confirmez-vous la suppression de cet élément ?',
-    buttons: {
-      confirm: {
-        text: 'Oui, supprimer',
-        action: function () {
-          location.href = this.$target.attr('href');
-          return true;
+function confirmDelete(formTitle) {
+  $('.confirm-delete').on('click', function(e) {
+    e.preventDefault();
+    const targetUrl = this.href;
+    bootbox.confirm({
+      title: formTitle,
+      message: 'Confirmez-vous la suppression de cet élément ?',
+      buttons: {
+        confirm: {
+          label: 'Oui, supprimer',
+          className: 'btn-primary'
+        },
+        cancel: {
+          label: 'Non',
+          className: 'btn-dark'
         }
       },
-      cancel: {
-        text: 'Non',
-        action: function () {
-          return true;
-        }
+      callback: function(confirmed) {
+        if (confirmed) location.href = targetUrl;
       }
-    }
+    });
   });
 }
