@@ -2,9 +2,16 @@
 
 namespace app\controllers;
 
+use Exception;
+use framework\App;
 use framework\Database;
 use framework\FormManager;
 
+/**
+ * Home page routes
+ * Class HomeController
+ * @package app\controllers
+ */
 class HomeController extends BaseController
 {
 
@@ -12,8 +19,15 @@ class HomeController extends BaseController
   {
     $migrations = [];
 
-    if (Database::createMigrationsTable()) {
-      $migrations = Database::getMigrations();
+    $config = App::loadConfig();
+    $migrationsTable = $config["System"]["MigrationsTable"] ?? "";
+
+    if (!empty($migrationsTable)) {
+      try {
+        if (Database::createMigrationsTable($migrationsTable))
+          $migrations = Database::getMigrations();
+      } catch (Exception $e) {
+      }
     }
 
     $this->render("home/index", [
@@ -47,19 +61,6 @@ class HomeController extends BaseController
       ])
     ;
     return $editForm;
-  }
-
-  public function getEdit()
-  {
-    $fm = $this->getEditForm();
-
-    $this->getView()->setVariable("form", $fm);
-    $this->render("home/edit");
-  }
-
-  public function postEdit()
-  {
-    $editForm = $this->getEditForm();
   }
 
 }

@@ -6,6 +6,11 @@ use Exception;
 use PDO;
 use PDOStatement;
 
+/**
+ * Fluent methods to build SQL queries
+ * Class QueryBuilder
+ * @package framework
+ */
 class QueryBuilder
 {
   /**

@@ -3,9 +3,19 @@
 
 namespace framework;
 
-
+/**
+ * Interface MigrationInterface
+ * @package framework
+ */
 interface MigrationInterface
 {
-  public function getDescription();
+  /**
+   * @return string
+   */
+  public function getDescription() : string;
+
+  /**
+   * @return bool|mixed
+   */
   public function execute();
 }

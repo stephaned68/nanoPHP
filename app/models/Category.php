@@ -4,6 +4,11 @@ namespace app\models;
 
 use JsonSerializable;
 
+/**
+ * Represents a Category entity
+ * Class Category
+ * @package app\models
+ */
 class Category implements JsonSerializable
 {
   /**

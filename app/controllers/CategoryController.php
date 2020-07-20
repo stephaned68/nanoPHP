@@ -10,6 +10,11 @@ use framework\FormManager;
 use framework\Router;
 use framework\Tools;
 
+/**
+ * Category web routes
+ * Class CategoryController
+ * @package app\controllers
+ */
 class CategoryController extends BaseController
 {
 
@@ -28,6 +33,9 @@ class CategoryController extends BaseController
       $this->categoryRepository = $categoryRepository;
   }
 
+  /**
+   * GET /category/index
+   */
   public function indexAction()
   {
     $categories = [];
@@ -43,6 +51,24 @@ class CategoryController extends BaseController
     ]);
   }
 
+  /**
+   * New category form
+   * Display - GET /category/new
+   * Process - POST
+   * @throws Exception
+   */
+  public function newAction()
+  {
+    $this->editAction();
+  }
+
+  /**
+   * Category edit form
+   * Display - GET /category/edit/{:id}
+   * Process - POST
+   * @param int $categoryId Category to edit
+   * @throws Exception
+   */
   public function editAction($categoryId = null)
   {
     $form = new FormManager();
@@ -95,6 +121,12 @@ class CategoryController extends BaseController
     $this->render("category/edit");
   }
 
+  /**
+   * Delete a category
+   * GET /category/delete/:id
+   * @param int $categoryId Category id to delete
+   * @throws Exception
+   */
   public function deleteAction($categoryId = null)
   {
     if ($categoryId != null) {

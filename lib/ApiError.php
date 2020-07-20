@@ -5,11 +5,16 @@ namespace framework;
 
 use JsonSerializable;
 
+/**
+ * Represents an API error
+ * Class ApiError
+ * @package framework
+ */
 class ApiError implements JsonSerializable
 {
 
   /**
-   * @var string
+   * @var string Error message
    */
   private string $message;
 

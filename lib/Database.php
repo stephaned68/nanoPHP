@@ -7,6 +7,12 @@ use PDO;
 use PDOException;
 use PDOStatement;
 
+
+/**
+ * Database utility functions
+ * Class Database
+ * @package framework
+ */
 class Database
 {
 
@@ -169,9 +175,15 @@ class Database
     return $data;
   }
 
-  public static function createMigrationsTable()
+  /**
+   * Create the database migrations table
+   * @param string $table
+   * @return bool|PDOStatement
+   * @throws Exception
+   */
+  public static function createMigrationsTable(string $table)
   {
-    $migrations = new SchemaBuilder("migrations");
+    $migrations = new SchemaBuilder($table);
     $migrations
       ->identity([
         "name" => "migration_id",
@@ -197,9 +209,16 @@ class Database
     return $migrations->create(true);
   }
 
-  public static function getMigrations()
+  /**
+   * Get a list of pending db migrations
+   * @param string|null $migrationsDir
+   * @return array|void
+   * @throws Exception
+   */
+  public static function getMigrations(string $migrationsDir = null)
   {
-    $migrationsDir = ROOT_PATH . "/data/migrations";
+    if ($migrationsDir == null)
+      $migrationsDir = ROOT_PATH . "/data/migrations";
     if (!file_exists($migrationsDir))
       return;
     if (!is_dir($migrationsDir))
@@ -209,10 +228,11 @@ class Database
 
     $migrations = scandir($migrationsDir);
     if (count($migrations) > 0) {
+      $config = App::loadConfig();
 
       // build the list of executed migrations
       $executedMigrations = [];
-      $qb = new QueryBuilder("migrations");
+      $qb = new QueryBuilder($config["System"]["MigrationsTable"]);
       $stmt = $qb
         ->select(["migration_name"])
         ->where("executed_at IS NOT NULL")
@@ -236,6 +256,12 @@ class Database
     return $migrationsList;
   }
 
+  /**
+   * Execute a list of db migrations
+   * @param array $migrationsList
+   * @return array List of migrations results
+   * @throws Exception
+   */
   public static function migrate(array $migrationsList = [])
   {
     if (count($migrationsList) == 0)
@@ -243,11 +269,13 @@ class Database
 
     $migrations = [];
 
+    $config = App::loadConfig();
+
     foreach ($migrationsList as $migrationName => $migrationInstance) {
       $migration = $migrationInstance->getDescription();
       $result = $migrationInstance->execute();
       if ($result == true) {
-        $qb = new QueryBuilder("migrations");
+        $qb = new QueryBuilder($config["System"]["MigrationsTable"]);
         $qb->insert([
           "migration_name" => $migrationName,
           "description" => $migrationInstance->getDescription(),

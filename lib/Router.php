@@ -2,6 +2,10 @@
 
 namespace framework;
 
+/**
+ * Class Router
+ * @package framework
+ */
 class Router
 {
 
@@ -55,6 +59,7 @@ class Router
 
     $routeParts = explode("/", $route);
 
+    // check if URL is like /api/...
     if (count($routeParts) > 0 && !empty(trim($routeParts[0]))) {
       if (strtolower($routeParts[0]) == "api") {
         array_shift($routeParts);
@@ -62,6 +67,7 @@ class Router
       }
     }
 
+    // get entity part (/entity/action or /api/entity)
     if (count($routeParts) > 0 && !empty(trim($routeParts[0]))) {
       $entity = Tools::pascalize(array_shift($routeParts));
       $this->controllerName = $entity . "Controller";
@@ -69,6 +75,7 @@ class Router
       $this->repositoryName = $entity . "Repository";
     }
 
+    // get action part (/entity/action)
     if ($this->actionName != "api") {
       if (count($routeParts) > 0 && !empty(trim($routeParts[0]))) {
         $action = array_shift($routeParts);
@@ -76,6 +83,7 @@ class Router
       }
     }
 
+    // get action parameters (/entity/action/.../...)
     if (count($routeParts) > 0 && !empty(trim($routeParts[0]))) {
       array_map(function ($item) {
         return urldecode($item);
@@ -83,6 +91,7 @@ class Router
       $this->actionParameters = $routeParts;
     }
 
+    // check if URL is like index.php?route=/entity/action/...
     $queryParams = $_GET;
     if (array_key_first($queryParams) == "route") {
       array_shift($queryParams);

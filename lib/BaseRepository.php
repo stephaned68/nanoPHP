@@ -4,6 +4,11 @@ namespace framework;
 
 use Exception;
 
+/**
+ * Base DAO functions for entities
+ * Class BaseRepository
+ * @package framework
+ */
 abstract class BaseRepository
 {
   /**

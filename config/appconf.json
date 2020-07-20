@@ -1,0 +1,39 @@
+{
+  "Runtime": {
+    "Mode": "development"
+  },
+
+  "Database": {
+    "Type": "mysql",
+    "Server": "localhost",
+    "Name": "simple-fw",
+    "User": "root",
+    "Password": ""
+  },
+
+  "System": {
+    "MigrationsTable": "db_migrations"
+  },
+
+  "db.mysql": {
+    "Type": "mysql",
+    "Server": "localhost",
+    "Name": "simple-fw",
+    "User": "root",
+    "Password": ""
+  },
+
+  "db.sqlite": {
+    "Type": "sqlite",
+    "Name": "simple-fw.db"
+  },
+
+  "db.postgres": {
+    "Type": "pgsql",
+    "Server": "localhost",
+    "Port": 5432,
+    "Name": "simple-fw",
+    "User": "postgres",
+    "Password": "F0rty!tw0"
+  }
+}

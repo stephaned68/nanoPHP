@@ -2,7 +2,11 @@
 
 namespace framework;
 
-
+/**
+ * Utility functions
+ * Class Tools
+ * @package framework
+ */
 class Tools
 {
 
@@ -132,7 +136,7 @@ class Tools
   }
 
   /**
-   * Set an attribute value
+   * Set an object's attribute value
    * @param object $o
    * @param string $attribute
    * @param $value

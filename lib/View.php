@@ -2,11 +2,15 @@
 
 namespace framework;
 
-
+/**
+ * Represents a page
+ * Class View
+ * @package framework
+ */
 class View
 {
   /**
-   * @var string
+   * @var string Base layout
    */
   private $layout;
 
@@ -86,6 +90,7 @@ class View
   }
 
   /**
+   * Set a single variable value
    * @param string $name Variable name
    * @param mixed $value Variable value
    * @return View

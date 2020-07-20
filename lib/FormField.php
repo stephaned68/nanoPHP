@@ -2,11 +2,16 @@
 
 namespace framework;
 
+/**
+ * Represents an HTML form field
+ * Class FormField
+ * @package framework
+ */
 class FormField
 {
 
   /**
-   * @var string
+   * @var string Field name (used for name='' and id='')
    */
   private $name;
 
@@ -16,7 +21,7 @@ class FormField
   private $label;
 
   /**
-   * @var int
+   * @var int Input sanitizer/validator
    */
   private $filter;
 
@@ -338,6 +343,7 @@ class FormField
       require VIEWS_PATH . "/_fragments/form-group.phtml";
     }
 
+    /** @var string $fieldHTML */
     $fieldHTML = ob_get_clean();
 
     return $fieldHTML;

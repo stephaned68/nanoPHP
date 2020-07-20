@@ -5,10 +5,15 @@ namespace framework;
 
 use Exception;
 
+/**
+ * Represents the application
+ * Class App
+ * @package framework
+ */
 class App
 {
   /**
-   * @var array
+   * @var array Configuration settings
    */
   private array $config;
 
@@ -35,25 +40,7 @@ class App
    */
   public function __construct()
   {
-    $configFile = CONFIG_PATH . DIRECTORY_SEPARATOR . "app.conf";
-    if (file_exists($configFile)) {
-      // load database configuration
-      $this->config = parse_ini_file($configFile, true);
-    } else {
-      // set default database configuration
-      $this->config = [
-        "Runtime" => [
-          "Mode" => "production"
-        ],
-        "Database" => [
-          "Type" => "mysql",
-          "Server" => "localhost",
-          "Name" => "simple-fw", // set the full pathname of the .db file for SQLite
-          "User" => "root",
-          "Password" => ""
-        ]
-      ];
-    }
+    $this->config = self::loadConfig();
 
     // define the database type
     define("DB_TYPE", $this->config["Database"]["Type"]);
@@ -130,5 +117,32 @@ class App
         echo $errorPage->render($errorView);
       }
     }
+  }
+
+  public static function loadConfig($configFile = null) : array
+  {
+    if ($configFile == null)
+      $configFile = CONFIG_PATH . DIRECTORY_SEPARATOR . "appconf.json";
+
+    if (file_exists($configFile)) {
+      // load database configuration
+      $configData = json_decode(file_get_contents($configFile), true);
+    } else {
+      // set default database configuration
+      $configData = [
+        "Runtime" => [
+          "Mode" => "production"
+        ],
+        "Database" => [
+          "Type" => "mysql",
+          "Server" => "localhost",
+          "Name" => "simple-fw", // set the full pathname of the .db file for SQLite
+          "User" => "root",
+          "Password" => ""
+        ]
+      ];
+    }
+
+    return $configData;
   }
 }

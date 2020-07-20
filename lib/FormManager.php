@@ -2,6 +2,11 @@
 
 namespace framework;
 
+/**
+ * Represents an HTML form
+ * Class FormManager
+ * @package framework
+ */
 class FormManager
 {
 
@@ -122,19 +127,23 @@ class FormManager
   public function addField($props)
   {
     if (is_array($props)) {
+      $props["name"] = $props["name"] ?? "";
+      $props["label"] = $props["label"] ?? $props["name"];
+      $props["filter"] = $props["filter"] ?? FILTER_SANITIZE_STRING;
+      $props["required"] = $props["required"] ?? false;
+      $props["defaultValue"] = $props["defaultValue"] ?? "";
+      $props["errorMessage"] = $props["errorMessage"] ?? ($props['label'] ?? $props["name"]) . " non saisi(e)";
+      $props["controlType"] = $props["controlType"] ?? "text";
+      $props["cssClass"] = $props["cssClass"] ?? FormField::getDefaultCSS($field->getControlType());
+      $props["primeKey"] = $props["primeKey"] ?? false;
+      $props["valueList"] = $props["valueList"] ?? [];
+      $props["size"] = $props["size"] ?? [];
+
       $field = new FormField();
-      $field
-        ->setName($props["name"] ?? "")
-        ->setLabel($props["label"] ?? $props["name"])
-        ->setFilter($props["filter"] ?? FILTER_SANITIZE_STRING)
-        ->setRequired($props["required"] ?? false)
-        ->setDefaultValue($props["defaultValue"] ?? "")
-        ->setErrorMessage($props["errorMessage"] ?? ($props['label'] ?? $props["name"]) . " non saisi(e)")
-        ->setControlType($props["controlType"] ?? "text")
-        ->setCssClass($props["cssClass"] ?? FormField::getDefaultCSS($field->getControlType()))
-        ->setPrimeKey($props["primeKey"] ?? false)
-        ->setValueList($props["valueList"] ?? [])
-        ->setSize($props["size"] ?? []);
+      foreach ($props as $propK => $propV) {
+        Tools::setProperty($field, $propK, $propV);
+      }
+
       $this->formFields[$props["name"]] = $field;
     }
     return $this;

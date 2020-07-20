@@ -9,10 +9,15 @@ use framework\ApiError;
 use framework\BaseRepository;
 use framework\Tools;
 
+/**
+ * Category API endpoints
+ * Class CategoriesController
+ * @package app\controllers
+ */
 class CategoriesController extends ApiController
 {
   /**
-   * @var BaseRepository
+   * @var BaseRepository Category DAO
    */
   private ?BaseRepository $categoryRepository;
 
@@ -25,6 +30,13 @@ class CategoriesController extends ApiController
     $this->categoryRepository = $categoryRepository;
   }
 
+  /**
+   * GET /api/category - Return all categories
+   * GET /api/category/:id - Return one category
+   * @param int $categoryId Category id to retrieve
+   * @return mixed|void
+   * @throws Exception
+   */
   public function doGet($categoryId = null)
   {
     if ($categoryId == null) {
@@ -45,6 +57,10 @@ class CategoriesController extends ApiController
     $this->sendResponse($response);
   }
 
+  /**
+   * POST /api/category - add a new category
+   * @return mixed|void
+   */
   public function doPost()
   {
     $category = $this->loadEntity(Category::class);
@@ -56,12 +72,19 @@ class CategoriesController extends ApiController
     } catch (Exception $e) {
       $response = new ApiError($e->getMessage());
     }
-    if ($rows == 0)
-      $this->setResponseCode(500);
+
+    $status = ($rows == 0) ? 500 : 201;
+    $this->setResponseCode($status);
 
     $this->sendResponse($response);
   }
 
+  /**
+   * PUT /api/category/:id - update a category
+   * @param int $categoryId Category id to update
+   * @return mixed|void
+   * @throws Exception
+   */
   public function doPut($categoryId)
   {
     $category = $this->categoryRepository->getOne($categoryId);
@@ -77,6 +100,7 @@ class CategoriesController extends ApiController
       } catch (Exception $e) {
         $response = new ApiError($e->getMessage());
       }
+
       if ($rows == 0)
         $this->setResponseCode(500);
     }
@@ -88,8 +112,34 @@ class CategoriesController extends ApiController
     $this->sendResponse($response);
   }
 
-  public function doDelete($id)
+  /**
+   * DELETE /api/category/:id
+   * @param int $categoryId Category id to delete
+   * @return mixed|void
+   * @throws Exception
+   */
+  public function doDelete($categoryId)
   {
-    // TODO: Implement doDelete() method.
+    $category = $this->categoryRepository->getOne($categoryId);
+
+    if ($category != null) {
+      $rows = 0;
+
+      try {
+        $rows = $this->categoryRepository->deleteOne($category);
+        $response = "";
+      } catch (Exception $e) {
+        $response = new ApiError($e->getMessage());
+      }
+
+      $status = ($rows == 0) ? 500 : 204;
+      $this->setResponseCode($status);
+    }
+    else {
+      $this->setResponseCode(404);
+      $response = new ApiError("Category not found");
+    }
+
+    $this->sendResponse($response);
   }
 }

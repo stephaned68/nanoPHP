@@ -4,20 +4,25 @@ namespace app\controllers;
 
 use framework\View;
 
+/**
+ * Base functionality for a web controller
+ * Class BaseController
+ * @package app\controllers
+ */
 abstract class BaseController
 {
   /**
-   * @var View
+   * @var View View engine
    */
   protected View $view;
 
   /**
-   * @var array
+   * @var array Query string parameters
    */
   protected array $queryParams = [];
 
   /**
-   * @var array
+   * @var array POSTed data
    */
   protected array $postData = [];
 
@@ -30,10 +35,10 @@ abstract class BaseController
   }
 
   /**
-   * @param $layout
+   * @param string $layout Base page layout
    * @return BaseController
    */
-  public function setView($layout = VIEWS_LAYOUT): BaseController
+  public function setView(string $layout = VIEWS_LAYOUT): BaseController
   {
     $this->view = new View($layout);
     return $this;
@@ -48,10 +53,10 @@ abstract class BaseController
   }
 
   /**
-   * @param $name
+   * @param string $name Query string parameter to retrieve
    * @return mixed|null
    */
-  public function getQueryParam($name)
+  public function getQueryParam(string $name)
   {
     return $this->queryParams[$name] ?? null;
   }
@@ -75,10 +80,10 @@ abstract class BaseController
   }
 
   /**
-   * @param $name
+   * @param string $name POST field to retrieve
    * @return mixed|null
    */
-  public function getPostField($name)
+  public function getPostField(string $name)
   {
     return $this->postData[$name] ?? null;
   }
@@ -95,10 +100,10 @@ abstract class BaseController
 
   /**
    * Render the view
-   * @param $template
+   * @param string $template Template name to render
    * @param array $data
    */
-  protected function render($template, $data = [])
+  protected function render(string $template, array $data = [])
   {
     echo $this->view->render($template, $data);
   }

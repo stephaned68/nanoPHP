@@ -1,33 +1,35 @@
 <?php
 
+
 namespace app\migrations;
 
-use framework\BaseMigration;
+
 use framework\MigrationInterface;
 use framework\SchemaBuilder;
 
-class DbMigration0000 implements MigrationInterface
+/**
+ * Create Contacts table
+ * Class Db20200701002_CreateContactsTable
+ * @package app\migrations
+ */
+class Db20200701002_CreateContactsTable implements MigrationInterface
 {
 
-  public function Execute()
+  /**
+   * Get migration description
+   * @return string
+   */
+  public function getDescription() : string
   {
-    $categories = new SchemaBuilder("categories");
-    $categories
-      ->identity([
-        "name" => "category_id",
-        "type" => "int"
-      ])
-      ->column([
-        "name" => "category_name",
-        "type" => "varchar",
-        "size" => "50",
-        "null" => false
-      ])
-    ;
-    $result = $categories->create(true);
-    if (!$result)
-      return $result->errorInfo()[2];
+    return "Création de la table Contacts";
+  }
 
+  /**
+   * Execute migration
+   * @return bool|mixed
+   */
+  public function execute()
+  {
     $contacts = new SchemaBuilder("contacts");
     $contacts
       ->identity([
@@ -65,10 +67,5 @@ class DbMigration0000 implements MigrationInterface
       return $result->errorInfo()[2];
 
     return true;
-  }
-
-  public function getDescription()
-  {
-    return "Création des tables Catégories et Contacts";
   }
 }

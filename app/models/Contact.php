@@ -3,6 +3,11 @@
 
 namespace app\models;
 
+/**
+ * Represents a Contact entity
+ * Class Contact
+ * @package app\models
+ */
 class Contact
 {
   /**

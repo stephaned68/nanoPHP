@@ -3,17 +3,36 @@
 
 namespace framework;
 
+use Exception;
 use PDOStatement;
 
+/**
+ * Fluent methods to manage db schema
+ * (create/alter/drop db objects)
+ * Class SchemaBuilder
+ * @package framework
+ */
 class SchemaBuilder
 {
 
+  /**
+   * @var string
+   */
   private string $table;
 
+  /**
+   * @var array
+   */
   private array $columns = [];
 
+  /**
+   * @var array
+   */
   private array $primaryKeys = [];
 
+  /**
+   * @var array
+   */
   private array $foreignKeys = [];
 
   /**
@@ -145,6 +164,7 @@ class SchemaBuilder
    * Create the table in the database
    * @param bool $ifNotExist
    * @return bool|PDOStatement
+   * @throws Exception
    */
   public function create(bool $ifNotExist = true)
   {

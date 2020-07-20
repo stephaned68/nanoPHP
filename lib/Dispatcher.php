@@ -5,6 +5,10 @@ namespace framework;
 use Error;
 use Exception;
 
+/**
+ * Class Dispatcher
+ * @package framework
+ */
 class Dispatcher
 {
   /**
@@ -32,13 +36,16 @@ class Dispatcher
 
     $action = $this->router->getActionName(); // e.g. indexAction()
 
+    // if URL is /api/entity
     if ($action == "api")
       $controllerClass = "app\\controllers\\" . $this->router->getApiController();
 
+    // See if Repository class exists
     $repositoryInstance = null;
     if (class_exists($repositoryClass))
       $repositoryInstance = new $repositoryClass();
 
+    // Instantiate controller class
     try {
       $controllerInstance = new $controllerClass($repositoryInstance);
     }
@@ -56,7 +63,7 @@ class Dispatcher
       $controllerInstance->setQueryParams($this->router->getQueryParams());
     }
 
-    // Method is either <functionName>Action or api<httpVerb>
+    // Method is either <functionName>Action or do<httpVerb>
     if ($action == "api") {
       $method = "do" . ucfirst($_SERVER["REQUEST_METHOD"]);
       if (method_exists($controllerInstance, $method)) {
@@ -64,6 +71,7 @@ class Dispatcher
       }
     }
 
+    // Call the action method
     call_user_func_array(
       [
         $controllerInstance,
