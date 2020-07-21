@@ -36,7 +36,7 @@ class CategoryController extends BaseController
   /**
    * GET /category/index
    */
-  public function indexAction()
+  public function indexAction() : void
   {
     $categories = [];
     try {
@@ -57,7 +57,7 @@ class CategoryController extends BaseController
    * Process - POST
    * @throws Exception
    */
-  public function newAction()
+  public function newAction() : void
   {
     $this->editAction();
   }
@@ -69,7 +69,7 @@ class CategoryController extends BaseController
    * @param int $categoryId Category to edit
    * @throws Exception
    */
-  public function editAction($categoryId = null)
+  public function editAction($categoryId = null) : void
   {
     $form = new FormManager();
     $form
@@ -96,10 +96,7 @@ class CategoryController extends BaseController
 
     if (FormManager::isSubmitted()) {
       if (!$form->isValid()) {
-        $errors = $form->validateForm();
-        foreach ($errors as $error) {
-          Tools::setFlash($error, "warning");
-        }
+        Tools::setFlash($form->checkForm(), "warning");
         Router::redirectTo([ "category", "edit", $categoryId ]);
         return;
       }
@@ -116,9 +113,10 @@ class CategoryController extends BaseController
       }
     }
 
-    $this->getView()->setVariable("form", $form);
-    $this->getView()->setVariable("category", $category);
-    $this->render("category/edit");
+    $this->render("category/edit", compact([
+      "form",
+      "category"
+    ]));
   }
 
   /**
@@ -127,7 +125,7 @@ class CategoryController extends BaseController
    * @param int $categoryId Category id to delete
    * @throws Exception
    */
-  public function deleteAction($categoryId = null)
+  public function deleteAction($categoryId = null) : void
   {
     if ($categoryId != null) {
       $category = $this->categoryRepository->getOne($categoryId);
