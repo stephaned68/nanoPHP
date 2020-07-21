@@ -5,7 +5,6 @@ namespace app\controllers;
 use Exception;
 use framework\App;
 use framework\Database;
-use framework\FormManager;
 
 /**
  * Home page routes
@@ -33,34 +32,6 @@ class HomeController extends BaseController
     $this->render("home/index", [
       "migrations" => $migrations
     ]);
-  }
-
-  private function getEditForm()
-  {
-    $editForm = new FormManager();
-    $editForm
-      ->setTitle("Maintenance des Contacts")
-      ->addField([
-        "name" => "contactId",
-        "label" => "Id. du contact",
-        "primeKey" => true
-      ])
-      ->addField([
-        "name" => "contactName",
-        "label" => "Nom du contact",
-        "required" => true
-      ])
-      ->addField([
-        "name" => "contactEmail",
-        "label" => "Email du contact"
-      ])
-      ->addField([
-        "name" => "categoryId",
-        "label" => "Catégorie de contact",
-        "required" => true
-      ])
-    ;
-    return $editForm;
   }
 
 }
