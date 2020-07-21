@@ -7,7 +7,7 @@
   <select class="<?= $fieldClass ?? '' ?>"
           id="<?= $fieldName ?>"
           name="<?= $fieldName ?>"
-    <?= $fieldReadonly ?? "" ?>
+    <?= implode(" ", [ ($fieldRequired ?? ""), ($fieldReadonly ?? "") ]) ?>
   >
     <?php foreach ($fieldSelect as $optionK => $optionV) : ?>
       <option value="<?= $optionK ?>" <?= $optionK == $fieldValue ? "selected" : "" ?>><?= $optionV ?></option>

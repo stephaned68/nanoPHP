@@ -10,6 +10,6 @@
     name="<?= $fieldName ?>"
     cols="<?= $fieldSize['cols'] ?>"
     rows="<?= $fieldSize['rows'] ?>"
-    <?= $fieldReadonly ?? "" ?>
+    <?= implode(" ", [ ($fieldRequired ?? ""), ($fieldReadonly ?? "") ]) ?>
   ><?= $fieldValue ?></textarea>
 </div>

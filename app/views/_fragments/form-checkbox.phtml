@@ -8,7 +8,7 @@
          id="<?= $fieldName ?>"
          name="<?= $fieldName ?>"
          value="1"
-    <?= $fieldReadonly ?? "" ?>
+    <?= implode(" ", [ ($fieldRequired ?? ""), ($fieldReadonly ?? "") ]) ?>
     <?= intval($fieldValue ?? "0") === 1 ? "checked" : "" ?>
   >
   <label class="form-check-label" for="<?= $fieldName ?>">
