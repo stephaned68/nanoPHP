@@ -13,22 +13,22 @@ class FormField
   /**
    * @var string Field name (used for name='' and id='')
    */
-  private $name;
+  private ?string $name;
 
   /**
    * @var string
    */
-  private $label;
+  private ?string $label;
 
   /**
    * @var int Input sanitizer/validator
    */
-  private $filter;
+  private int $filter;
 
   /**
    * @var bool
    */
-  private $required;
+  private bool $required;
 
   /**
    * @var mixed
@@ -38,32 +38,32 @@ class FormField
   /**
    * @var string
    */
-  private $errorMessage;
+  private ?string $errorMessage;
 
   /**
    * @var string
    */
-  private $controlType;
+  private ?string $controlType;
 
   /**
    * @var string
    */
-  private $cssClass;
+  private ?string $cssClass;
 
   /**
-   * @var boolean
+   * @var bool
    */
-  private $primeKey;
-
-  /**
-   * @var array
-   */
-  private $valueList;
+  private bool $primeKey;
 
   /**
    * @var array
    */
-  private $size;
+  private array $valueList;
+
+  /**
+   * @var array
+   */
+  private array $size;
 
   /**
    * FormField constructor.
@@ -323,7 +323,8 @@ class FormField
       "fieldClass" => $this->cssClass ?? self::getDefaultCSS($this->controlType),
       "fieldSelect" => $this->valueList ?? [],
       "fieldSize" => $this->size,
-      "fieldValue" => $data ?? $this->defaultValue
+      "fieldValue" => $data ?? $this->defaultValue,
+      "fieldRequired" => $this->required ? 'required' : ''
     ];
 
     if ($this->primeKey && $data != null) {
@@ -350,7 +351,7 @@ class FormField
   }
 
   /**
-   * Return the CSS class for the control
+   * Return the default CSS class for the control
    * @param $controlType
    * @return mixed
    */
@@ -358,13 +359,9 @@ class FormField
   {
     $defaultCSS = [
       "hidden" => "",
-      "text" => "form-control",
-      "number" => "form-control",
-      "select" => "form-control",
-      "textarea" => "form-control",
       "checkbox" => "form-check-input"
     ];
 
-    return $defaultCSS[$controlType];
+    return $defaultCSS[$controlType] ?? "form-control";
   }
 }

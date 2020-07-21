@@ -134,7 +134,7 @@ class FormManager
       $props["defaultValue"] = $props["defaultValue"] ?? "";
       $props["errorMessage"] = $props["errorMessage"] ?? ($props['label'] ?? $props["name"]) . " non saisi(e)";
       $props["controlType"] = $props["controlType"] ?? "text";
-      $props["cssClass"] = $props["cssClass"] ?? FormField::getDefaultCSS($field->getControlType());
+      $props["cssClass"] = $props["cssClass"] ?? FormField::getDefaultCSS($props["controlType"]);
       $props["primeKey"] = $props["primeKey"] ?? false;
       $props["valueList"] = $props["valueList"] ?? [];
       $props["size"] = $props["size"] ?? [];
@@ -163,22 +163,23 @@ class FormManager
    * Check if form is valid
    * @return bool
    */
-  public function isValid()
+  public function isValid() : bool
   {
-    return (count($this->validateForm()) == 0);
+    $errors = $this->checkForm();
+    return (count($errors) == 0);
   }
 
   /**
    * Check form fields and return a list of errors, if any
    * @return array
    */
-  public function validateForm()
+  public function checkForm() : array
   {
     $errorList = [];
 
     foreach ($this->formFields as $field) {
       $fieldValue = filter_input(INPUT_POST, $field->getName(), $field->getFilter());
-      if (trim($fieldValue) === "") {
+      if (empty($fieldValue)) {
         if ($field->isPrimeKey() || $field->isRequired()) {
           $errorList[] = $field->getErrorMessage();
         }
