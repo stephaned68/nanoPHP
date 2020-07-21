@@ -1,0 +1,41 @@
+<?php
+
+use framework\Router;
+
+?>
+
+<div class="col-md-4 mt-2">
+
+  <table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+      <th>Contact</th>
+      <th>E-mail</th>
+      <th class="text-center">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($contacts as $contact) : ?>
+      <tr>
+        <td>
+          <a href="<?= Router::route([ "contact", "edit", $contact->getContactId() ]) ?>">
+            <?= $contact->getContactName() ?>
+          </a>
+        </td>
+        <td>
+          <?= $contact->getContactEmail() ?>
+        </td>
+        <td class="text-center">
+          <a class="confirm-delete" href="<?= Router::route([ "contact", "delete", $contact->getContactId() ]) ?>">
+            <i class="fa fa-trash text-danger"></i>
+          </a>
+        </td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
+
+  <a href="<?= Router::route([ "contact", "new" ]) ?>" class="btn btn-outline-success">
+    <i class="fa fa-edit"></i> Ajouter
+  </a>
+</div>
