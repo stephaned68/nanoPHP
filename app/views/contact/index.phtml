@@ -26,7 +26,10 @@ use framework\Router;
           <?= $contact->getContactEmail() ?>
         </td>
         <td class="text-center">
-          <a class="confirm-delete" href="<?= Router::route([ "contact", "delete", $contact->getContactId() ]) ?>">
+          <a class="confirm-delete"
+             href="<?= Router::route([ "contact", "delete", $contact->getContactId() ]) ?>"
+             data-description="<?= $contact->getContactName() ?>"
+          >
             <i class="fa fa-trash text-danger"></i>
           </a>
         </td>

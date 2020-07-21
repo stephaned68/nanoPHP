@@ -37,9 +37,11 @@ function confirmDelete(formTitle) {
   $('.confirm-delete').on('click', function(e) {
     e.preventDefault();
     const targetUrl = this.href;
+    let item = this.dataset.description || '';
+    if (item !== '') item = '<br>- ' + item;
     bootbox.confirm({
       title: formTitle,
-      message: 'Confirmez-vous la suppression de cet élément ?',
+      message: 'Confirmez-vous la suppression de cet élément ?' + item,
       buttons: {
         confirm: {
           label: 'Oui, supprimer',

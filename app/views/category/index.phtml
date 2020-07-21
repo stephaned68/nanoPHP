@@ -22,7 +22,10 @@ use framework\Router;
         </a>
       </td>
       <td class="text-center">
-        <a class="confirm-delete" href="<?= Router::route([ "category", "delete", $category->getCategoryId() ]) ?>">
+        <a class="confirm-delete"
+           href="<?= Router::route([ "category", "delete", $category->getCategoryId() ]) ?>"
+           data-description="<?= $category->getCategoryName() ?>"
+        >
           <i class="fa fa-trash text-danger"></i>
         </a>
       </td>
