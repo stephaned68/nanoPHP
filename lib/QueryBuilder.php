@@ -34,6 +34,11 @@ class QueryBuilder
   private array $fields = [];
 
   /**
+   * @var string
+   */
+  private string $distinct = "";
+
+  /**
    * @var array
    */
   private array $where = [];
@@ -115,6 +120,20 @@ class QueryBuilder
       $fields = ["*"];
     }
     $this->fields = $fields;
+    return $this;
+  }
+
+  /**
+   * SELECT with DISTINCT clause
+   * @param $field
+   * @return $this
+   */
+  public function distinct($field)
+  {
+    $this->distinct = "distinct ";
+    if (!is_array($field))
+      $field = [ $field ];
+    $this->fields = $field;
     return $this;
   }
 
@@ -277,45 +296,45 @@ class QueryBuilder
 
   /**
    * Add a WHERE ... IN (...) clause
-   * @param string $where
+   * @param string $column
    * @param $in
    * @return $this
    */
-  public function in(string $where, $in)
+  public function in(string $column, $in)
   {
     $inValues = $in;
     if (is_array($in)) {
       $inValues = "(" . implode(", ", $in) . ")";
     }
-    if (is_object($in)) {
+    else if (is_object($in)) {
       if (get_class($in) == "QueryBuilder") {
         $inValues = $in->getSubQuery();
       }
     }
-    $this->where[] = "$where IN $inValues";
+    $this->where[] = "$column IN $inValues";
     return $this;
   }
 
   /**
    * Add a OR ... IN (...) WHERE clause
-   * @param string $where
+   * @param string $column
    * @param $in
    * @return $this
    */
-  public function orIn(string $where, $in)
+  public function orIn(string $column, $in)
   {
-    return $this->in(" OR $where", $in);
+    return $this->in(" OR $column", $in);
   }
 
   /**
    * Add a AND ... IN (...) WHERE clause
-   * @param string $where
+   * @param string $column
    * @param $in
    * @return $this
    */
-  public function andIn(string $where, $in)
+  public function andIn(string $column, $in)
   {
-    return $this->in(" AND $where", $in);
+    return $this->in(" AND $column", $in);
   }
 
   /**
@@ -326,7 +345,7 @@ class QueryBuilder
   {
     $sql = [];
 
-    $sql[] = "SELECT " . implode(", ", $this->fields);
+    $sql[] = "SELECT " . $this->distinct . implode(", ", $this->fields);
     $sql[] = "FROM " . implode(", ", $this->table);
     if (count($this->joins) > 0) {
       foreach ($this->joins as $join) {
