@@ -13,7 +13,7 @@
     if (isset($fieldSize)) {
       foreach (["min", "max", "minlength", "maxlength"] as $prop) {
         if (array_key_exists($prop, $fieldSize)) {
-          echo $prop . "=" . "\"" . $fieldSize[$prop] . "\"";
+          echo " " . $prop . "=" . '"' . $fieldSize[$prop] . '"';
         }
       }
     }
