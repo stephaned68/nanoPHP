@@ -44,8 +44,8 @@ abstract class BaseRepository
     $class = explode(DIRECTORY_SEPARATOR, get_class($this));
     $this->entity = str_replace("Repository", "", $class[count($class) - 1]);
     $this->class = implode(DIRECTORY_SEPARATOR, [ "app", "models", $this->entity ]);
-    $this->table = Tools::snakeCase(Tools::pluralize($this->entity));
-    $this->pkColumns = [ Tools::snakeCase($this->entity . "Id") ];
+    $this->table = Database::tableName($this->entity);
+    $this->pkColumns = [ Database::columnName($this->entity . "Id") ];
   }
 
   /**
