@@ -28,11 +28,16 @@ class ContactController extends BaseController
     $this->contactRepository = $contactRepository;
   }
 
+  /**
+   * Contacts list
+   * GET /contact/index
+   * @throws Exception
+   */
   public function indexAction() : void
   {
     $contacts = [];
     try {
-      $contacts = $this->contactRepository->getAll();
+      $contacts = $this->contactRepository->getAllWithCategory();
     } catch (Exception $e) {
       Tools::setFlash($e->getMessage(), "danger");
     }
