@@ -209,7 +209,7 @@ class QueryBuilder
     string $table,
     string $primaryKey,
     string $foreignKey,
-    string $alias)
+    ?string $alias)
   {
     $this->joins[] = [
       "type" => $type,
@@ -349,9 +349,17 @@ class QueryBuilder
     $sql[] = "FROM " . implode(", ", $this->table);
     if (count($this->joins) > 0) {
       foreach ($this->joins as $join) {
-        $sql[] = "{$join["type"]} JOIN {$join["table"]}"
-          . (($join["alias"] != null) ? " AS {$join["alias"]}" : "")
+        $joinTable = "{$join["type"]} JOIN {$join["table"]}";
+        if ($join["fk"] = $join["pk"]) {
+          if (!is_array($join["fk"]))
+            $join["fk"] = [ $join["fk"] ];
+          $joinTable .= " USING (" . implode(", ", $join["fk"]) . ")";
+        }
+        else {
+          $joinTable .= (($join["alias"] != null) ? " AS {$join["alias"]}" : "")
           . " ON {$join["fk"]} = {$join["pk"]}";
+        }
+        $sql[] = $joinTable;
       }
     }
     if (count($this->where) > 0) {
