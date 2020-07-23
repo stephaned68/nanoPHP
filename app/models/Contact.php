@@ -3,6 +3,8 @@
 
 namespace app\models;
 
+use Exception;
+
 /**
  * Represents a Contact entity
  * Class Contact
@@ -29,6 +31,11 @@ class Contact
    * @var int
    */
   private int $categoryId;
+
+  /**
+   * @var Category
+   */
+  private ?Category $category = null;
 
   /**
    * @return int|null
@@ -101,4 +108,29 @@ class Contact
     $this->categoryId = $categoryId;
     return $this;
   }
+
+  /**
+   * @return Category
+   * @throws Exception
+   */
+  public function getCategory(): Category
+  {
+    if ($this->category == null) { // LAZY loading
+      $categoryRepository = new CategoryRepository();
+      $this->category = $categoryRepository->getOne($this->categoryId);
+      $categoryRepository = null;
+    }
+    return $this->category;
+  }
+
+  /**
+   * @param Category $category
+   * @return Contact
+   */
+  public function setCategory(Category $category): Contact
+  {
+    $this->category = $category;
+    return $this;
+  }
+
 }
