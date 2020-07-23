@@ -86,6 +86,26 @@ class Database
   }
 
   /**
+   * Return table name for entity
+   * @param string $entityName
+   * @return string
+   */
+  public static function tableName(string $entityName)
+  {
+    return Tools::snakeCase(Tools::pluralize($entityName));
+  }
+
+  /**
+   * Return column name for attribute
+   * @param string $attributeName
+   * @return string
+   */
+  public static function columnName(string $attributeName)
+  {
+    return Tools::snakeCase($attributeName);
+  }
+
+  /**
    * Prepare and execute a SQL query with optional named parameters
    * @param string $sqlQuery
    * @param array $queryParams
@@ -112,7 +132,7 @@ class Database
    * @param bool $isNew
    * @return object
    */
-  private static function hydrate(object $entity, array $data, $isNew = false)
+  public static function hydrate(object $entity, array $data, $isNew = false)
   {
     $data["new"] = $isNew;
 
