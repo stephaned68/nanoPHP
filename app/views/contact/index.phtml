@@ -11,6 +11,7 @@ use framework\Router;
     <tr>
       <th>Contact</th>
       <th>E-mail</th>
+      <th>Catégorie</th>
       <th class="text-center">Actions</th>
     </tr>
     </thead>
@@ -24,6 +25,9 @@ use framework\Router;
         </td>
         <td>
           <?= $contact->getContactEmail() ?>
+        </td>
+        <td>
+          <?= $contact->getCategory()->getCategoryName() ?>
         </td>
         <td class="text-center">
           <a class="confirm-delete"
