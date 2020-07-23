@@ -29,7 +29,6 @@ class ContactRepository extends BaseRepository
       $qb
         ->inner("categories","category_id", "category_id")
         ->select();
-      var_dump($qb->getQuery());
       $statement = Database::execute($qb->getQuery());
       $qb = null;
       while ($row = $statement->fetch()) {
