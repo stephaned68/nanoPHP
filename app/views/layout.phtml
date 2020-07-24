@@ -20,7 +20,9 @@ if (isset($migrations)) {
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title><?= APP_NAME ?></title>
   <link rel="stylesheet" href="/assets/bootstrap/dist/css/bootstrap.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
+        integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
+        crossorigin="anonymous" />
   <link rel="stylesheet" href="/assets/select2/dist/css/select2.min.css">
 </head>
 <body class="container-fluid">
@@ -128,8 +130,11 @@ if (isset($migrations)) {
 <!-- bootbox dependencies -->
 <script src="/assets/bootbox/dist/bootbox.all.min.js"></script>
 
-<!-- Fontawesome dependencies
-<script src="https://kit.fontawesome.com/fff1f19af2.js"></script> -->
+<!-- Fontawesome dependencies -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/js/all.min.js"
+        integrity="sha512-YSdqvJoZr83hj76AIVdOcvLWYMWzy6sJyIMic2aQz5kh2bPTd9dzY3NtdeEAzPp/PhgZqr4aJObB3ym/vsItMg=="
+        crossorigin="anonymous">
+</script>
 
 <script src="/scripts/utils.js"></script>
 
@@ -138,6 +143,13 @@ if (isset($migrations)) {
   <?php include $script ?>
 </script>
 <?php endif; ?>
+
+<script>
+  $(() => {
+    select2();
+    if (typeof onDocumentReady === 'function') onDocumentReady();
+  })
+</script>
 
 </body>
 </html>
