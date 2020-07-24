@@ -94,7 +94,8 @@ class ContactController extends BaseController
         "label" => "Catégorie de contact",
         "required" => true,
         "controlType" => "select",
-        "valueList" => $categoryList
+        "valueList" => $categoryList,
+        "cssClass" => "select2"
       ])
       ->setIndexRoute(Router::route([ "contact", "index" ]))
       ->setDeleteRoute(Router::route([ "contact", "delete", $contactId ]))
