@@ -320,7 +320,7 @@ class FormField
       "fieldName" => $this->name,
       "fieldLabel" => $this->label ?? $this->name,
       "fieldType" => $this->controlType ?? "text",
-      "fieldClass" => $this->cssClass ?? self::getDefaultCSS($this->controlType),
+      "fieldClass" => self::getDefaultCSS($this->controlType) . " " . $this->cssClass ?? "",
       "fieldSelect" => $this->valueList ?? [],
       "fieldSize" => $this->size,
       "fieldValue" => $data ?? $this->defaultValue,
