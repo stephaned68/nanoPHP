@@ -94,6 +94,31 @@ abstract class BaseRepository
   }
 
   /**
+   * Filter entities by criteria
+   * @param array $filters
+   * @return array
+   * @throws Exception
+   */
+  public function findBy(array $filters) : array
+  {
+    $ix = 0;
+    $qb = new QueryBuilder($this->table);
+    $qb->select();
+    foreach($filters as $column => $value) {
+      if ($ix++ == 0) {
+        $qb->where($column . " = :" . $column);
+      }
+      else {
+        $qb->andWhere($column . " = :" . $column);
+      }
+    }
+    $statement = Database::execute($qb->getQuery(), $filters);
+    $qb = null;
+
+    return Database::fetchEntities($statement, $this->class);
+  }
+
+  /**
    * Insert an entity
    * @param object $entity
    * @return int
