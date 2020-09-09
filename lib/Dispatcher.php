@@ -53,13 +53,13 @@ class Dispatcher
       throw new Exception("Route error - " . $ex->getMessage(), 404);
     }
 
-    if (is_subclass_of($controllerInstance, "app\controllers\BaseController")) {
+    if (is_subclass_of($controllerInstance, "framework\WebController")) {
       $controllerInstance->setView();
       $controllerInstance->setQueryParams($this->router->getQueryParams());
       $controllerInstance->setPostData($this->router->getPostData());
     }
 
-    if (is_subclass_of($controllerInstance, "app\controllers\ApiController")) {
+    if (is_subclass_of($controllerInstance, "framework\ApiController")) {
       $controllerInstance->setQueryParams($this->router->getQueryParams());
     }
 
