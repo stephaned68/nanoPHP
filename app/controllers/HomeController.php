@@ -5,13 +5,14 @@ namespace app\controllers;
 use Exception;
 use framework\App;
 use framework\Database;
+use framework\WebController;
 
 /**
  * Home page routes
  * Class HomeController
  * @package app\controllers
  */
-class HomeController extends BaseController
+class HomeController extends WebController
 {
 
   public function indexAction()

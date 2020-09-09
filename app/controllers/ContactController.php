@@ -10,8 +10,9 @@ use Exception;
 use framework\FormManager;
 use framework\Router;
 use framework\Tools;
+use framework\WebController;
 
-class ContactController extends BaseController
+class ContactController extends WebController
 {
 
   /**
@@ -134,10 +135,10 @@ class ContactController extends BaseController
   /**
    * Delete a contact
    * GET /contact/delete/:id
-   * @param null $contactId Contact id to delete
+   * @param int|null $contactId Contact id to delete
    * @throws Exception
    */
-  public function deleteAction($contactId = null) : void
+  public function deleteAction(?int $contactId = null) : void
   {
     if ($contactId != null) {
       $contact = $this->contactRepository->getOne($contactId);

@@ -5,8 +5,10 @@ namespace app\controllers;
 
 use app\models\Category;
 use Exception;
+use framework\ApiController;
 use framework\ApiError;
 use framework\BaseRepository;
+use framework\HttpHelper;
 use framework\Tools;
 
 /**
@@ -17,23 +19,24 @@ use framework\Tools;
 class CategoriesController extends ApiController
 {
   /**
-   * @var BaseRepository Category DAO
+   * @var BaseRepository|null Category DAO
    */
   private ?BaseRepository $categoryRepository;
 
   /**
    * CategoriesController constructor.
-   * @param BaseRepository $categoryRepository
+   * @param BaseRepository|null $categoryRepository
    */
   public function __construct(?BaseRepository $categoryRepository)
   {
     $this->categoryRepository = $categoryRepository;
+    $this->responseCode = HttpHelper::$STATUS_OK;
   }
 
   /**
    * GET /api/category - Return all categories
    * GET /api/category/:id - Return one category
-   * @param int $categoryId Category id to retrieve
+   * @param mixed $categoryId Category id to retrieve
    * @return mixed|void
    * @throws Exception
    */
@@ -46,11 +49,11 @@ class CategoriesController extends ApiController
       try {
         $response = $this->categoryRepository->getOne($categoryId);
         if ($response == null) {
-          $this->setResponseCode(404);
+          $this->setResponseCode(HttpHelper::$STATUS_NOTFOUND);
           $response = new ApiError("Category not found");
         }
       } catch (Exception $e) {
-        $this->setResponseCode(500);
+        $this->setResponseCode(HttpHelper::$STATUS_ERROR);
         $response = new ApiError($e->getMessage());
       }
     }
@@ -73,7 +76,7 @@ class CategoriesController extends ApiController
       $response = new ApiError($e->getMessage());
     }
 
-    $status = ($rows == 0) ? 500 : 201;
+    $status = ($rows == 0) ? HttpHelper::$STATUS_ERROR : HttpHelper::$STATUS_CREATED;
     $this->setResponseCode($status);
 
     $this->sendResponse($response);
@@ -102,10 +105,10 @@ class CategoriesController extends ApiController
       }
 
       if ($rows == 0)
-        $this->setResponseCode(500);
+        $this->setResponseCode(HttpHelper::$STATUS_ERROR);
     }
     else {
-      $this->setResponseCode(404);
+      $this->setResponseCode(HttpHelper::$STATUS_NOTFOUND);
       $response = new ApiError("Category not found");
     }
 
@@ -132,11 +135,11 @@ class CategoriesController extends ApiController
         $response = new ApiError($e->getMessage());
       }
 
-      $status = ($rows == 0) ? 500 : 204;
+      $status = ($rows == 0) ? HttpHelper::$STATUS_ERROR : HttpHelper::$STATUS_EMPTY;
       $this->setResponseCode($status);
     }
     else {
-      $this->setResponseCode(404);
+      $this->setResponseCode(HttpHelper::$STATUS_NOTFOUND);
       $response = new ApiError("Category not found");
     }
 

@@ -6,13 +6,14 @@ namespace app\controllers;
 use Exception;
 use framework\Database;
 use framework\Router;
+use framework\WebController;
 
 /**
  * Migrations web routes
  * Class MigrationController
  * @package app\controllers3
  */
-class MigrationController extends BaseController
+class MigrationController extends WebController
 {
 
   /**

@@ -4,18 +4,20 @@
 namespace app\controllers;
 
 use app\models\Category;
+use app\models\CategoryDto;
 use Exception;
 use framework\BaseRepository;
 use framework\FormManager;
 use framework\Router;
 use framework\Tools;
+use framework\WebController;
 
 /**
  * Category web routes
  * Class CategoryController
  * @package app\controllers
  */
-class CategoryController extends BaseController
+class CategoryController extends WebController
 {
 
   /**
@@ -25,7 +27,7 @@ class CategoryController extends BaseController
 
   /**
    * CategoryController constructor.
-   * @param BaseRepository $categoryRepository
+   * @param BaseRepository|null $categoryRepository
    */
   public function __construct(?BaseRepository $categoryRepository)
   {
@@ -66,10 +68,10 @@ class CategoryController extends BaseController
    * Category edit form
    * Display - GET /category/edit/{:id}
    * Process - POST
-   * @param int $categoryId Category to edit
+   * @param int|null $categoryId Category to edit
    * @throws Exception
    */
-  public function editAction($categoryId = null) : void
+  public function editAction(?int $categoryId = null) : void
   {
     $form = new FormManager();
     $form
@@ -122,10 +124,10 @@ class CategoryController extends BaseController
   /**
    * Delete a category
    * GET /category/delete/:id
-   * @param int $categoryId Category id to delete
+   * @param int|null $categoryId Category id to delete
    * @throws Exception
    */
-  public function deleteAction($categoryId = null) : void
+  public function deleteAction(?int $categoryId = null) : void
   {
     if ($categoryId != null) {
       $category = $this->categoryRepository->getOne($categoryId);
