@@ -27,7 +27,7 @@ class View
   /**
    * View constructor.
    * @param string $layout
-   * @param object $viewModel
+   * @param object|null $viewModel
    */
   public function __construct(string $layout = VIEWS_LAYOUT, object $viewModel = null)
   {
@@ -150,7 +150,6 @@ class View
     } else {
       return $this->getTemplateContent($this->layout, $data);
     }
-
   }
 
 }
