@@ -1,15 +1,14 @@
 <?php
 
-namespace app\controllers;
+namespace framework;
 
-use framework\View;
 
 /**
  * Base functionality for a web controller
- * Class BaseController
+ * Class WebController
  * @package app\controllers
  */
-abstract class BaseController
+abstract class WebController
 {
   /**
    * @var View View engine
@@ -36,9 +35,9 @@ abstract class BaseController
 
   /**
    * @param string $layout Base page layout
-   * @return BaseController
+   * @return WebController
    */
-  public function setView(string $layout = VIEWS_LAYOUT): BaseController
+  public function setView(string $layout = VIEWS_LAYOUT): WebController
   {
     $this->view = new View($layout);
     return $this;
@@ -63,9 +62,9 @@ abstract class BaseController
 
   /**
    * @param array $queryParams
-   * @return BaseController
+   * @return WebController
    */
-  public function setQueryParams(array $queryParams): BaseController
+  public function setQueryParams(array $queryParams): WebController
   {
     $this->queryParams = $queryParams;
     return $this;
@@ -90,9 +89,9 @@ abstract class BaseController
 
   /**
    * @param array $postData
-   * @return BaseController
+   * @return WebController
    */
-  public function setPostData(array $postData): BaseController
+  public function setPostData(array $postData): WebController
   {
     $this->postData = $postData;
     return $this;

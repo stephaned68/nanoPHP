@@ -1,22 +1,20 @@
 <?php
 
 
-namespace app\controllers;
-
-
-use framework\Tools;
+namespace framework;
 
 /**
  * Base functionality for an API controller
+ *
  * Class ApiController
- * @package app\controllers
+ * @package framework
  */
 abstract class ApiController
 {
   /**
    * @var int HTTP status code
    */
-  protected int $responseCode = 200;
+  protected int $responseCode;
 
   /**
    * @var array Query string parameters
@@ -96,7 +94,9 @@ abstract class ApiController
    */
   protected function sendResponse($response) : void
   {
-    if ($this->responseCode != 200)
+    if (!isset($this->responseCode))
+      $this->responseCode = HttpHelper::$STATUS_OK;
+    if ($this->responseCode != HttpHelper::$STATUS_OK)
       http_response_code($this->responseCode);
     echo json_encode($response);
   }
