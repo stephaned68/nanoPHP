@@ -1,9 +1,15 @@
 <?php
 
+
 namespace framework;
+
+use ReflectionClass;
+use ReflectionException;
+use ReflectionProperty;
 
 /**
  * Utility functions
+ *
  * Class Tools
  * @package framework
  */
@@ -12,6 +18,7 @@ class Tools
 
   /**
    * Pluralize a string
+   *
    * @param $singular
    * @return string
    */
@@ -30,6 +37,7 @@ class Tools
 
   /**
    * Pascalize a string (my_var > MyVar)
+   *
    * @param string $str
    * @return string|string[]|null
    */
@@ -51,6 +59,7 @@ class Tools
 
   /**
    * Camelize a string (my_var > myVar)
+   *
    * @param string $str
    * @return string
    */
@@ -63,6 +72,7 @@ class Tools
 
   /**
    * Convert a string to snake case (myVar | MyVar > my_var)
+   *
    * @param $str
    * @return string
    */
@@ -81,6 +91,7 @@ class Tools
 
   /**
    * Add a flash message to the session
+   *
    * @param string|array $message
    * @param null $type
    */
@@ -108,6 +119,7 @@ class Tools
 
   /**
    * Get flash messages for a type
+   *
    * @param null $type
    * @return mixed|string
    */
@@ -121,6 +133,7 @@ class Tools
 
   /**
    * Return an attribute value from an object
+   *
    * @param object $o
    * @param string $attribute
    * @return mixed|null
@@ -137,6 +150,7 @@ class Tools
 
   /**
    * Set an object's attribute value
+   *
    * @param object $o
    * @param string $attribute
    * @param $value
@@ -150,8 +164,44 @@ class Tools
   }
 
   /**
+   * Auto-mapping from source to target object
+   *
+   * Can take an associative array of {source property} => {target property}
+   *
+   * @param object $source
+   * @param object $target
+   * @param array $mapping
+   * @throws ReflectionException
+   */
+  public static function map(object $source, object $target, array $mapping = []) : void
+  {
+    $mappedTo = array_flip($mapping);
+    $reflect = new ReflectionClass($target);
+    $props   = $reflect->getProperties(
+      ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE
+    );
+    foreach ($props as $prop) {
+      $propName = $prop->getName();
+      $propSource = $mappedTo[$propName] ?? $propName;
+      $propValue = self::getProperty($source, $propSource);
+      if ($propValue == null)
+        $propValue = $source->$propSource;
+      if ($propValue != null) {
+        if ($prop->isPublic()) {
+          $target->$propName = $propValue;
+        }
+        else {
+          self::setProperty($target, $propName, $propValue);
+        }
+      }
+    }
+  }
+
+  /**
    * Extract a key => value array
+   *
    * from an array of associative arrays or objects
+   *
    * @param array $list
    * @param string $valueField
    * @param string $labelField

@@ -33,7 +33,7 @@ class Contact
   private int $categoryId;
 
   /**
-   * @var Category
+   * @var Category|null
    */
   private ?Category $category = null;
 
@@ -130,6 +130,7 @@ class Contact
   public function setCategory(Category $category): Contact
   {
     $this->category = $category;
+    $this->categoryId = (int)$category->getCategoryId();
     return $this;
   }
 

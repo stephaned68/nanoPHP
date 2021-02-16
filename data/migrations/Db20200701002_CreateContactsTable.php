@@ -61,6 +61,8 @@ class Db20200701002_CreateContactsTable implements MigrationInterface
         "table" => "categories",
         "update" => "CASCADE"
       ])
+      ->hasCreatedAt()
+      ->hasUpdatedAt()
     ;
     $result = $contacts->create(true);
     if (!$result)

@@ -18,8 +18,5 @@
       "app\\models\\": "app/models/",
       "app\\migrations\\": "data/migrations/"
     }
-  },
-  "require-dev": {
-    "phpdocumentor/phpdocumentor": "^2.9"
   }
 }

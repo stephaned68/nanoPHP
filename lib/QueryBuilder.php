@@ -85,7 +85,7 @@ class QueryBuilder
 
   /**
    * QueryBuilder constructor.
-   * @param string $table
+   * @param string|null $table
    * @param string|null $alias
    * @throws Exception
    */
@@ -103,7 +103,7 @@ class QueryBuilder
    * @param string|null $alias
    * @return $this
    */
-  public function from(string $table, string $alias = null)
+  public function from(string $table, string $alias = null): QueryBuilder
   {
     $this->table[] = $table . (($alias != null) ? " as $alias" : "");
     return $this;
@@ -114,7 +114,7 @@ class QueryBuilder
    * @param array $fields
    * @return $this
    */
-  public function select(array $fields = [])
+  public function select(array $fields = []): QueryBuilder
   {
     if (count($fields) == 0) {
       $fields = ["*"];
@@ -128,7 +128,7 @@ class QueryBuilder
    * @param $field
    * @return $this
    */
-  public function distinct($field)
+  public function distinct($field): QueryBuilder
   {
     $this->distinct = "distinct ";
     if (!is_array($field))
@@ -142,7 +142,7 @@ class QueryBuilder
    * @param string $where
    * @return $this
    */
-  public function where(string $where)
+  public function where(string $where): QueryBuilder
   {
     $this->where[] = $where;
     return $this;
@@ -153,7 +153,7 @@ class QueryBuilder
    * @param string $where
    * @return $this
    */
-  public function andWhere(string $where)
+  public function andWhere(string $where): QueryBuilder
   {
     return $this->where("AND {$where}");
   }
@@ -163,7 +163,7 @@ class QueryBuilder
    * @param string $where
    * @return $this
    */
-  public function orWhere(string $where)
+  public function orWhere(string $where): QueryBuilder
   {
     return $this->where("OR {$where}");
   }
@@ -173,7 +173,7 @@ class QueryBuilder
    * @param string $orderBy
    * @return $this
    */
-  public function orderBy(string $orderBy)
+  public function orderBy(string $orderBy): QueryBuilder
   {
     if (strpos($orderBy, ".") == 0) {
       $orderBy = $this->alias ?? $this->table . "." . $orderBy;
@@ -187,7 +187,7 @@ class QueryBuilder
    * @param string $orderByDesc
    * @return $this
    */
-  public function orderByDesc(string $orderByDesc)
+  public function orderByDesc(string $orderByDesc): QueryBuilder
   {
     if (strpos($orderByDesc, ".") == 0) {
       $orderByDesc = $this->alias ?? $this->table . "." . $orderByDesc;
@@ -201,7 +201,7 @@ class QueryBuilder
    * @param string $table
    * @param string $primaryKey
    * @param string $foreignKey
-   * @param string $alias
+   * @param string|null $alias
    * @return $this
    */
   private function join(
@@ -209,7 +209,7 @@ class QueryBuilder
     string $table,
     string $primaryKey,
     string $foreignKey,
-    ?string $alias)
+    ?string $alias): QueryBuilder
   {
     $this->joins[] = [
       "type" => $type,
@@ -233,7 +233,7 @@ class QueryBuilder
     string $table,
     string $primaryKey,
     string $foreignKey,
-    string $alias = null)
+    string $alias = null): QueryBuilder
   {
     return $this->join("INNER", $table, $primaryKey, $foreignKey, $alias);
   }
@@ -250,7 +250,7 @@ class QueryBuilder
     string $table,
     string $primaryKey,
     string $foreignKey,
-    string $alias)
+    string $alias): QueryBuilder
   {
     return $this->join("LEFT", $table, $primaryKey, $foreignKey, $alias);
   }
@@ -260,7 +260,7 @@ class QueryBuilder
    * @param string $groupBy
    * @return $this
    */
-  public function groupBy(string $groupBy)
+  public function groupBy(string $groupBy): QueryBuilder
   {
     if (strpos($groupBy, ".") == 0) {
       $groupBy = $this->alias ?? $this->table . "." . $groupBy;
@@ -275,7 +275,7 @@ class QueryBuilder
    * @param string $value
    * @return $this
    */
-  public function setParam(string $key, string $value)
+  public function setParam(string $key, string $value): QueryBuilder
   {
     $this->params[$key] = $value;
     return $this;
@@ -287,7 +287,7 @@ class QueryBuilder
    * @param int $offset
    * @return $this
    */
-  public function limit(int $limit, int $offset = -1)
+  public function limit(int $limit, int $offset = -1): QueryBuilder
   {
     $this->limit = $limit;
     $this->offset = $offset;
@@ -300,7 +300,7 @@ class QueryBuilder
    * @param $in
    * @return $this
    */
-  public function in(string $column, $in)
+  public function in(string $column, $in): QueryBuilder
   {
     $inValues = $in;
     if (is_array($in)) {
@@ -321,7 +321,7 @@ class QueryBuilder
    * @param $in
    * @return $this
    */
-  public function orIn(string $column, $in)
+  public function orIn(string $column, $in): QueryBuilder
   {
     return $this->in(" OR $column", $in);
   }
@@ -332,7 +332,7 @@ class QueryBuilder
    * @param $in
    * @return $this
    */
-  public function andIn(string $column, $in)
+  public function andIn(string $column, $in): QueryBuilder
   {
     return $this->in(" AND $column", $in);
   }
@@ -341,7 +341,7 @@ class QueryBuilder
    * Return the built SQL query
    * @return string
    */
-  public function getQuery()
+  public function getQuery(): string
   {
     $sql = [];
 
@@ -385,15 +385,15 @@ class QueryBuilder
    * Return as a sub-query
    * @return string
    */
-  public function getSubQuery()
+  public function getSubQuery(): string
   {
     return "(" . $this->getQuery() . ")";
   }
 
   /**
    * Prepare and return a PDO statement
+   * @param string|null $sqlQuery
    * @param array $params
-   * @param string $sqlQuery
    * @return bool|PDOStatement
    * @throws Exception
    */
@@ -405,7 +405,6 @@ class QueryBuilder
     if (count($params) == 0) {
       $params = $this->params;
     }
-
     return Database::execute($sqlQuery, $params);
   }
 
@@ -455,7 +454,7 @@ class QueryBuilder
     $columns = [];
     $values = [];
     foreach ($this->insertValues as $column => $value) {
-      if ($value != null) {
+      if (!is_array($value) && !is_object($value) && $value != null) {
         $columns[] = $column;
         $values[] = ":" . $column;
       }
@@ -477,7 +476,9 @@ class QueryBuilder
     $sql[] = "UPDATE " . $this->table[0] . " SET";
     $values = [];
     foreach ($this->updateValues as $column => $value) {
-      $values[] = $column . " = :" . $column;
+      if (!is_array($value) && !is_object($value)) {
+        $values[] = $column . " = :" . $column;
+      }
     }
     $sql[] = implode(", ", $values);
     if (count($this->where) > 0) {

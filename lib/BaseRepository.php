@@ -9,7 +9,7 @@ use Exception;
  * Class BaseRepository
  * @package framework
  */
-abstract class BaseRepository
+abstract class BaseRepository implements RepositoryInterface
 {
   /**
    * @var string Entity name
@@ -53,7 +53,7 @@ abstract class BaseRepository
    * @return array
    * @throws Exception
    */
-  public function getAll()
+  public function getAll() : array
   {
     try {
       $qb = new QueryBuilder($this->table);
@@ -181,7 +181,7 @@ abstract class BaseRepository
    * @return int
    * @throws Exception
    */
-  public function save(object $entity)
+  public function save(object $entity) : int
   {
     $inserted = false;
 
