@@ -117,7 +117,7 @@ class Database
     $statement = self::getPDO()->prepare($sqlQuery);
     if (count($queryParams) > 0) {
       foreach ($queryParams as $key => $value) {
-        if ($value != null)
+        if (!is_array($value) && !is_object($value) && $value != null)
           $statement->bindValue($key, $value);
       }
     }

@@ -36,12 +36,40 @@ class SchemaBuilder
   private array $foreignKeys = [];
 
   /**
+   * @var bool
+   */
+  protected bool $createdAt = false;
+
+  /**
+   * @var bool
+   */
+  protected bool $updatedAt = false;
+
+  /**
    * SchemaBuilder constructor.
    * @param string $table
    */
   public function __construct(string $table)
   {
     $this->table = $table;
+  }
+
+  /**
+   * @return SchemaBuilder
+   */
+  public function hasCreatedAt(): SchemaBuilder
+  {
+    $this->createdAt = true;
+    return $this;
+  }
+
+  /**
+   * @return SchemaBuilder
+   */
+  public function hasUpdatedAt(): SchemaBuilder
+  {
+    $this->updatedAt = true;
+    return $this;
   }
 
   /**
@@ -186,6 +214,12 @@ class SchemaBuilder
         $columnDef .= " " . $columnInfo["extra"];
       }
       $sql[] = $columnDef;
+    }
+    if ($this->createdAt) {
+      $sql[] = ", created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP";
+    }
+    if ($this->updatedAt) {
+      $sql[] = ", updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
     }
     if (count($this->primaryKeys) > 0) {
       $sql[] = ", PRIMARY KEY (" . implode(", ", $this->primaryKeys) . ")";
