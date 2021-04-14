@@ -11,7 +11,7 @@ class FormField
 {
 
   /**
-   * @var string Field name (used for name='' and id='')
+   * @var string|null Field name (used for name='' and id='')
    */
   private ?string $name;
 
@@ -33,20 +33,20 @@ class FormField
   /**
    * @var mixed
    */
-  private $defaultValue;
+  private ?string $defaultValue;
 
   /**
-   * @var string
+   * @var string|null
    */
   private ?string $errorMessage;
 
   /**
-   * @var string
+   * @var string|null
    */
   private ?string $controlType;
 
   /**
-   * @var string
+   * @var string|null
    */
   private ?string $cssClass;
 
@@ -67,27 +67,27 @@ class FormField
 
   /**
    * FormField constructor.
-   * @param string $name
-   * @param string $label
+   * @param string|null $name
+   * @param string|null $label
    * @param int $filter
    * @param bool $required
    * @param mixed $defaultValue
-   * @param string $errorMessage
-   * @param string $controlType
-   * @param string $cssClass
+   * @param string|null $errorMessage
+   * @param string|null $controlType
+   * @param string|null $cssClass
    * @param bool $primeKey
    * @param array $valueList
    * @param array $size
    */
   public function __construct(
-    string $name = null,
-    string $label = null,
+    ?string $name = null,
+    ?string $label = null,
     int $filter = 0,
     bool $required = false,
-    $defaultValue = null,
-    string $errorMessage = null,
-    string $controlType = null,
-    string $cssClass = null,
+    ?string $defaultValue = null,
+    ?string $errorMessage = null,
+    ?string $controlType = null,
+    ?string $cssClass = null,
     bool $primeKey = false,
     array $valueList = [],
     array $size = []
@@ -190,7 +190,7 @@ class FormField
    * @param mixed $defaultValue
    * @return FormField
    */
-  public function setDefaultValue($defaultValue)
+  public function setDefaultValue($defaultValue): FormField
   {
     $this->defaultValue = $defaultValue;
     return $this;
@@ -344,18 +344,15 @@ class FormField
       require VIEWS_PATH . "/_fragments/form-group.phtml";
     }
 
-    /** @var string $fieldHTML */
-    $fieldHTML = ob_get_clean();
-
-    return $fieldHTML;
+    return ob_get_clean();
   }
 
   /**
    * Return the default CSS class for the control
    * @param $controlType
-   * @return mixed
+   * @return string
    */
-  public static function getDefaultCSS($controlType)
+  public static function getDefaultCSS($controlType): string
   {
     $defaultCSS = [
       "hidden" => "",

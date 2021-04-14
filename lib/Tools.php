@@ -4,7 +4,6 @@
 namespace framework;
 
 use ReflectionClass;
-use ReflectionException;
 use ReflectionProperty;
 
 /**
@@ -19,10 +18,10 @@ class Tools
   /**
    * Pluralize a string
    *
-   * @param $singular
+   * @param string $singular
    * @return string
    */
-  public static function pluralize($singular)
+  public static function pluralize(string $singular): string
   {
     $last_letter = $singular[strlen($singular) - 1];
     switch ($last_letter) {
@@ -41,7 +40,7 @@ class Tools
    * @param string $str
    * @return string|string[]|null
    */
-  public static function pascalize($str)
+  public static function pascalize(string $str) : string
   {
     $pattern = "#(\_|-| )?([a-zA-Z0-9])+#";
     return preg_replace_callback(
@@ -63,7 +62,7 @@ class Tools
    * @param string $str
    * @return string
    */
-  public static function camelize($str)
+  public static function camelize(string $str): string
   {
     $temp = self::pascalize($str);
     return strtolower(substr($temp, 0, 1))
@@ -73,10 +72,10 @@ class Tools
   /**
    * Convert a string to snake case (myVar | MyVar > my_var)
    *
-   * @param $str
+   * @param string $str
    * @return string
    */
-  public static function snakeCase($str)
+  public static function snakeCase(string $str): string
   {
     $temp = str_split($str);
     $result = "";
@@ -171,7 +170,6 @@ class Tools
    * @param object $source
    * @param object $target
    * @param array $mapping
-   * @throws ReflectionException
    */
   public static function map(object $source, object $target, array $mapping = []) : void
   {

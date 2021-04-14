@@ -33,7 +33,7 @@ class Database
    * @return PDO
    * @throws Exception
    */
-  public static function getPDO()
+  public static function getPDO(): ?PDO
   {
     if (!in_array(DB_TYPE, PDO::getAvailableDrivers(), true))
     {
@@ -63,7 +63,7 @@ class Database
    * @return bool
    * @throws Exception
    */
-  public static function exists(string $table)
+  public static function exists(string $table): bool
   {
     $qb = new QueryBuilder();
     $qb
@@ -90,7 +90,7 @@ class Database
    * @param string $entityName
    * @return string
    */
-  public static function tableName(string $entityName)
+  public static function tableName(string $entityName): string
   {
     return Tools::snakeCase(Tools::pluralize($entityName));
   }
@@ -100,7 +100,7 @@ class Database
    * @param string $attributeName
    * @return string
    */
-  public static function columnName(string $attributeName)
+  public static function columnName(string $attributeName): string
   {
     return Tools::snakeCase($attributeName);
   }
@@ -132,7 +132,7 @@ class Database
    * @param bool $isNew
    * @return object
    */
-  public static function hydrate(object $entity, array $data, $isNew = false)
+  public static function hydrate(object $entity, array $data, $isNew = false): object
   {
     $data["new"] = $isNew;
 
@@ -282,7 +282,7 @@ class Database
    * @return array List of migrations results
    * @throws Exception
    */
-  public static function migrate(array $migrationsList = [])
+  public static function migrate(array $migrationsList = []): array
   {
     if (count($migrationsList) == 0)
       $migrationsList = Database::getMigrations();

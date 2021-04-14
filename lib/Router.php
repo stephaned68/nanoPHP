@@ -53,7 +53,7 @@ class Router
    * Router constructor.
    * @param string $route
    */
-  public function __construct($route)
+  public function __construct(string $route)
   {
     $this->route = $route;
 
@@ -104,7 +104,7 @@ class Router
   /**
    * @return string
    */
-  public function getRoute()
+  public function getRoute(): string
   {
     return $this->route;
   }
@@ -112,7 +112,7 @@ class Router
   /**
    * @return string
    */
-  public function getControllerName()
+  public function getControllerName(): string
   {
     return $this->controllerName;
   }
@@ -128,7 +128,7 @@ class Router
   /**
    * @return string
    */
-  public function getActionName()
+  public function getActionName(): string
   {
     return $this->actionName;
   }
@@ -136,7 +136,7 @@ class Router
   /**
    * @return array
    */
-  public function getActionParameters()
+  public function getActionParameters(): array
   {
     return $this->actionParameters;
   }
@@ -171,7 +171,7 @@ class Router
    * @param array $query
    * @return string
    */
-  public static function route($args = [], $query = [])
+  public static function route($args = [], $query = []): string
   {
     $url = "/";
     if (count($args) > 0) {

@@ -63,7 +63,7 @@ abstract class ApiController
    * @param bool $asArray
    * @return array
    */
-  protected function getRequest(bool $asArray = true)
+  protected function getRequest(bool $asArray = true): array
   {
     return json_decode(file_get_contents("php://input"), $asArray);
   }

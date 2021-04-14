@@ -12,7 +12,7 @@ class View
   /**
    * @var string Base layout
    */
-  private $layout;
+  private string $layout;
 
   /**
    * @var object

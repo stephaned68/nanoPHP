@@ -191,10 +191,10 @@ class SchemaBuilder
   /**
    * Create the table in the database
    * @param bool $ifNotExist
-   * @return bool|PDOStatement
+   * @return PDOStatement
    * @throws Exception
    */
-  public function create(bool $ifNotExist = true)
+  public function create(bool $ifNotExist = true): PDOStatement
   {
     $sql = [];
     $sql[] = "CREATE TABLE " . ($ifNotExist ? "IF NOT EXISTS " : "") . $this->name($this->table);

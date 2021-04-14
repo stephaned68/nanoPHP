@@ -106,7 +106,7 @@ class FormManager
    * @param array $submits
    * @return bool
    */
-  public static function isSubmitted($submits = [ "submitButton", "closeButton" ])
+  public static function isSubmitted($submits = [ "submitButton", "closeButton" ]): bool
   {
     $submitted = false;
     foreach ($submits as $submit) {
@@ -124,7 +124,7 @@ class FormManager
    * @param $props
    * @return FormManager
    */
-  public function addField($props)
+  public function addField($props): FormManager
   {
     if (is_array($props)) {
       $props["name"] = $props["name"] ?? "";
@@ -154,7 +154,7 @@ class FormManager
    * @param $name
    * @return FormField
    */
-  public function getField($name)
+  public function getField($name): FormField
   {
     return $this->formFields[$name];
   }
@@ -193,7 +193,7 @@ class FormManager
    * Convert POSTed data to an associative array
    * @return array
    */
-  public function getData()
+  public function getData(): array
   {
 
     $formData = [];
@@ -228,7 +228,7 @@ class FormManager
   /**
    * Generate HTML chunk for field
    * @param FormField $field
-   * @param object $entity
+   * @param object|null $entity
    * @return false|string
    */
   private function renderHTML(FormField $field, ?object $entity)
@@ -242,10 +242,10 @@ class FormManager
 
   /**
    * Render all fields in the form
-   * @param object $entity
+   * @param object|null $entity
    * @return string
    */
-  public function render(?object $entity)
+  public function render(?object $entity): string
   {
     $formHTML = "";
 
@@ -258,11 +258,11 @@ class FormManager
 
   /**
    * Render a field by its name
-   * @param $fieldName
-   * @param $entity
-   * @return false|string
+   * @param string $fieldName
+   * @param object|null $entity
+   * @return string
    */
-  public function renderField(string $fieldName, ?object $entity)
+  public function renderField(string $fieldName, ?object $entity) : string
   {
     $formHTML = "";
 
@@ -278,7 +278,7 @@ class FormManager
 
   /**
    * Render the bottom buttons bar
-   * @param object $entity
+   * @param object|null $entity
    * @return false|string
    */
   public function renderButtons(?object $entity)
