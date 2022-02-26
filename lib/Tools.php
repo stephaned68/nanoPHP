@@ -5,6 +5,7 @@ namespace framework;
 
 use ReflectionClass;
 use ReflectionProperty;
+use Exception;
 
 /**
  * Utility functions
@@ -38,7 +39,7 @@ class Tools
    * Pascalize a string (my_var > MyVar)
    *
    * @param string $str
-   * @return string|string[]|null
+   * @return string
    */
   public static function pascalize(string $str) : string
   {
@@ -91,10 +92,10 @@ class Tools
   /**
    * Add a flash message to the session
    *
-   * @param string|array $message
+   * @param array|string $message
    * @param null $type
    */
-  public static function setFlash($message, $type = null)
+  public static function setFlash(array|string $message, $type = null)
   {
     $type = $type ?? "flash";
 
@@ -106,7 +107,7 @@ class Tools
 
     if (is_array($message)) {
       if (is_array($messages) && count($messages) > 0) {
-        array_merge($messages, $message);
+        $messages = array_merge($messages, $message);
       } else {
         $messages = $message;
       }
@@ -122,7 +123,7 @@ class Tools
    * @param null $type
    * @return mixed|string
    */
-  public static function getFlash($type = null)
+  public static function getFlash($type = null): mixed
   {
     $type = $type ?? "flash";
     $messages = $_SESSION[$type] ?? [];
@@ -135,9 +136,9 @@ class Tools
    *
    * @param object $o
    * @param string $attribute
-   * @return mixed|null
+   * @return mixed
    */
-  public static function getProperty(object $o, string $attribute)
+  public static function getProperty(object $o, string $attribute): mixed
   {
     $value = null;
     $getter = "get" . ucfirst($attribute);
@@ -197,7 +198,6 @@ class Tools
 
   /**
    * Extract a key => value array
-   *
    * from an array of associative arrays or objects
    *
    * @param array $list
@@ -225,6 +225,18 @@ class Tools
     }
 
     return $select;
+  }
+
+  /**
+   * Return a random string
+   *
+   * @param int $length
+   * @return string
+   * @throws Exception
+   */
+  public static function getToken(int $length = 35) : string
+  {
+    return bin2hex(random_bytes($length));
   }
 
 }

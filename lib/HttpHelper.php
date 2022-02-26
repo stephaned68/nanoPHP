@@ -42,6 +42,11 @@ class HttpHelper
   public static int $STATUS_NOTFOUND = 404;
 
   /**
+   * @var int HTTP 405
+   */
+  public static int $METHOD_NOTALLOWED = 405;
+
+  /**
    * @var int HTTP 500
    */
   public static int $STATUS_ERROR = 500;

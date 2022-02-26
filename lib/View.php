@@ -95,7 +95,7 @@ class View
    * @param mixed $value Variable value
    * @return View
    */
-  public function setVariable(string $name, $value): View
+  public function setVariable(string $name, mixed $value): View
   {
     $this->data[$name] = $value;
     return $this;
@@ -107,7 +107,7 @@ class View
    * @param array $data
    * @return false|string
    */
-  private function getTemplateContent($template, $data = [])
+  private function getTemplateContent($template, array $data = []): bool|string
   {
     if (count($data) > 0) {
       $this->data = array_merge($this->data, $data);
@@ -132,7 +132,7 @@ class View
    * @param array $data
    * @return false|string
    */
-  public function render($template, $data = [])
+  public function render($template, array $data = []): bool|string
   {
     $pageContent = $this->getTemplateContent($template, $data);
     $data["content"] = $pageContent;

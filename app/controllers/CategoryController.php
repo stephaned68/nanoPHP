@@ -4,7 +4,6 @@
 namespace app\controllers;
 
 use app\models\Category;
-use app\models\CategoryDto;
 use Exception;
 use framework\BaseRepository;
 use framework\FormManager;
@@ -84,7 +83,7 @@ class CategoryController extends WebController
       ->addField([
         "name" => "categoryName",
         "label" => "Nom de la catégorie",
-        "filter" => FILTER_SANITIZE_STRING,
+        "filter" => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
         "required" => true
       ])
       ->setIndexRoute(Router::route([ "category", "index" ]))
@@ -97,6 +96,11 @@ class CategoryController extends WebController
     }
 
     if (FormManager::isSubmitted()) {
+      if (!$form->checkCSRFToken()) {
+        $form->handleCSRF();
+        Router::redirectTo([ "category", "index" ]);
+        return;
+      }
       if (!$form->isValid()) {
         Tools::setFlash($form->checkForm(), "warning");
         Router::redirectTo([ "category", "edit", $categoryId ]);

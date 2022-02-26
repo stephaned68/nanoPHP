@@ -2,6 +2,8 @@
 
 namespace framework;
 
+use Exception;
+
 /**
  * Represents an HTML form
  * Class FormManager
@@ -106,7 +108,7 @@ class FormManager
    * @param array $submits
    * @return bool
    */
-  public static function isSubmitted($submits = [ "submitButton", "closeButton" ]): bool
+  public static function isSubmitted(array $submits = [ "submitButton", "closeButton" ]): bool
   {
     $submitted = false;
     foreach ($submits as $submit) {
@@ -129,7 +131,7 @@ class FormManager
     if (is_array($props)) {
       $props["name"] = $props["name"] ?? "";
       $props["label"] = $props["label"] ?? $props["name"];
-      $props["filter"] = $props["filter"] ?? FILTER_SANITIZE_STRING;
+      $props["filter"] = $props["filter"] ?? FILTER_SANITIZE_FULL_SPECIAL_CHARS;
       $props["required"] = $props["required"] ?? false;
       $props["defaultValue"] = $props["defaultValue"] ?? "";
       $props["errorMessage"] = $props["errorMessage"] ?? ($props['label'] ?? $props["name"]) . " non saisi(e)";
@@ -157,6 +159,28 @@ class FormManager
   public function getField($name): FormField
   {
     return $this->formFields[$name];
+  }
+
+  /**
+   * Check submitted CSRF token
+   *
+   * @return bool
+   */
+  public function checkCSRFToken(): bool
+  {
+    $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    if (!$token || $token !== $_SESSION['token'])
+      return false;
+    return true;
+  }
+
+  /**
+   * Handler CSRF
+   */
+  public function handleCSRF() : void
+  {
+    Tools::setFlash("Erreur d'envoi de formulaire", "danger");
+    header($_SERVER['SERVER_PROTOCOL'] . ' '. HttpHelper::$METHOD_NOTALLOWED . ' ' . 'Method Not Allowed');
   }
 
   /**
@@ -231,13 +255,29 @@ class FormManager
    * @param object|null $entity
    * @return false|string
    */
-  private function renderHTML(FormField $field, ?object $entity)
+  private function renderHTML(FormField $field, ?object $entity): bool|string
   {
     $name = $field->getName();
     $value = null;
     if ($entity != null)
       $value = Tools::getProperty($entity, Tools::pascalize($name));
     return $field->render($value);
+  }
+
+  /**
+   * Render the CSRF token
+   *
+   * @return string
+   * @throws Exception
+   */
+  public function addCSRFToken() : string
+  {
+    $_SESSION['token'] = Tools::getToken();
+    ob_start();
+
+    require VIEWS_PATH . "/_fragments/form-csrf.phtml";
+
+    return ob_get_clean();
   }
 
   /**
@@ -281,7 +321,7 @@ class FormManager
    * @param object|null $entity
    * @return false|string
    */
-  public function renderButtons(?object $entity)
+  public function renderButtons(?object $entity): bool|string
   {
     $empty = ($entity == null);
 

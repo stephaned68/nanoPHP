@@ -12,7 +12,7 @@ use JsonSerializable;
 class Category implements JsonSerializable
 {
   /**
-   * @var int
+   * @var int|null
    */
   protected ?int $categoryId = null;
 
@@ -58,9 +58,9 @@ class Category implements JsonSerializable
   }
 
   /**
-   * @return array|mixed
+   * @return array
    */
-  public function jsonSerialize()
+  public function jsonSerialize(): array
   {
     return get_object_vars($this);
   }

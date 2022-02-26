@@ -171,12 +171,12 @@ class Router
    * @param array $query
    * @return string
    */
-  public static function route($args = [], $query = []): string
+  public static function route(array $args = [], array $query = []): string
   {
     $url = "/";
     if (count($args) > 0) {
       foreach ($args as $argK => $argV) {
-        $args[$argK] = urlencode(trim($argV));
+        $args[$argK] = urlencode(trim($argV ?? ""));
       }
       $url .= implode("/", $args);
     }
