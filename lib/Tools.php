@@ -25,14 +25,11 @@ class Tools
   public static function pluralize(string $singular): string
   {
     $last_letter = $singular[strlen($singular) - 1];
-    switch ($last_letter) {
-      case 'y':
-        return substr($singular, 0, -1) . "ies";
-      case 's':
-        return $singular . "es";
-      default:
-        return $singular . "s";
-    }
+    return match ($last_letter) {
+      'y' => substr($singular, 0, -1) . "ies",
+      's' => $singular . "es",
+      default => $singular . "s",
+    };
   }
 
   /**
@@ -43,7 +40,7 @@ class Tools
    */
   public static function pascalize(string $str) : string
   {
-    $pattern = "#(\_|-| )?([a-zA-Z0-9])+#";
+    $pattern = "#([_\- ])?([a-zA-Z\d])+#";
     return preg_replace_callback(
       $pattern,
       function ($matches) {
@@ -95,7 +92,7 @@ class Tools
    * @param array|string $message
    * @param null $type
    */
-  public static function setFlash(array|string $message, $type = null)
+  public static function setFlash(array|string $message, $type = null): void
   {
     $type = $type ?? "flash";
 
@@ -112,7 +109,7 @@ class Tools
         $messages = $message;
       }
     } else {
-      array_push($messages, $message);
+      $messages[] = $message;
     }
     $_SESSION[$type] = $messages;
   }
@@ -121,7 +118,7 @@ class Tools
    * Get flash messages for a type
    *
    * @param null $type
-   * @return mixed|string
+   * @return mixed
    */
   public static function getFlash($type = null): mixed
   {
