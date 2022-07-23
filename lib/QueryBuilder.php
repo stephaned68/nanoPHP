@@ -125,10 +125,10 @@ class QueryBuilder
 
   /**
    * SELECT with DISTINCT clause
-   * @param $field
+   * @param array|string $field
    * @return $this
    */
-  public function distinct($field): QueryBuilder
+  public function distinct(array|string $field): QueryBuilder
   {
     $this->distinct = "distinct ";
     if (!is_array($field))
@@ -397,7 +397,7 @@ class QueryBuilder
    * @return bool|PDOStatement
    * @throws Exception
    */
-  public function execute(string $sqlQuery = null, array $params = [])
+  public function execute(string $sqlQuery = null, array $params = []): bool|PDOStatement
   {
     if ($sqlQuery == null)
       $sqlQuery = $this->getQuery();
@@ -506,10 +506,10 @@ class QueryBuilder
 
   /**
    * Generate and execute an INSERT / UPDATE / DELETE query
-   * @return PDOStatement
+   * @return bool|PDOStatement|null
    * @throws Exception
    */
-  public function commit()
+  public function commit(): bool|PDOStatement|null
   {
     $inserts = count($this->insertValues);
     $updates = count($this->updateValues);
