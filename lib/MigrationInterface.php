@@ -15,7 +15,7 @@ interface MigrationInterface
   public function getDescription() : string;
 
   /**
-   * @return bool|mixed
+   * @return mixed
    */
-  public function execute();
+  public function execute(): mixed;
 }
