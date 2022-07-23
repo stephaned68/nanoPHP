@@ -8,6 +8,7 @@ use Exception;
 use framework\BaseRepository;
 use framework\Database;
 use framework\QueryBuilder;
+use framework\Tools;
 
 /**
  * DAO functions for the Contact entity
@@ -20,7 +21,7 @@ class ContactRepository extends BaseRepository
    * @return array
    * @throws Exception
    */
-  public function getAllWithCategory()
+  public function getAllWithCategory(): array
   {
     $all = [];
 
@@ -49,9 +50,13 @@ class ContactRepository extends BaseRepository
 
   }
 
+  /**
+   * @param $id
+   * @return Contact|null
+   * @throws Exception
+   */
   public function getOne($id): ?Contact
   {
     return parent::getOne($id);
   }
-
 }
