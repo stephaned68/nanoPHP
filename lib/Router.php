@@ -32,7 +32,7 @@ class Router
   /**
    * @var array
    */
-  private $actionParameters = [];
+  private array $actionParameters = [];
 
   /**
    * @var array
@@ -194,7 +194,7 @@ class Router
    * Redirect to a route
    * @param array $args
    */
-  public static function redirectTo($args = [])
+  public static function redirectTo(array $args = []): void
   {
     header("Location: " . self::route($args));
   }
