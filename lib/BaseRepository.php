@@ -71,7 +71,7 @@ abstract class BaseRepository implements RepositoryInterface
   /**
    * Get one entity
    * @param $id
-   * @return object
+   * @return object|null
    * @throws Exception
    */
   public function getOne($id) : ?object
