@@ -41,9 +41,9 @@ abstract class ApiController
 
   /**
    * @param string $name Query string parameter to return
-   * @return mixed|null
+   * @return mixed
    */
-  public function getQueryParam(string $name)
+  public function getQueryParam(string $name): mixed
   {
     return $this->queryParams[$name] ?? null;
   }
@@ -104,28 +104,28 @@ abstract class ApiController
   /**
    * GET /api/entity - returns all entities
    * GET /api/entity/:id - returns one entity
-   * @param mixed $id Record identifier to return
+   * @param mixed|null $id Record identifier to return
    * @return mixed
    */
-  abstract public function doGet($id = null);
+  abstract public function doGet(mixed $id = null): mixed;
 
   /**
    * POST /api/entity - add a new entity
    * @return mixed
    */
-  abstract public function doPost();
+  abstract public function doPost(): mixed;
 
   /**
    * PUT /api/entity/:id - update an entity
    * @param $id
    * @return mixed
    */
-  abstract public function doPut($id);
+  abstract public function doPut($id): mixed;
 
   /**
    * DELETE /api/entity/:id - delete an entity
    * @param $id
    * @return mixed
    */
-  abstract public function doDelete($id);
+  abstract public function doDelete($id): mixed;
 }
