@@ -36,18 +36,18 @@ class CategoriesController extends ApiController
   /**
    * GET /api/category - Return all categories
    * GET /api/category/:id - Return one category
-   * @param mixed $categoryId Category id to retrieve
-   * @return mixed|void
+   * @param mixed|null $id Category id to retrieve
+   * @return void
    * @throws Exception
    */
-  public function doGet($categoryId = null)
+  public function doGet(mixed $id = null): void
   {
-    if ($categoryId == null) {
+    if ($id == null) {
       $response = $this->categoryRepository->getAll();
     }
     else {
       try {
-        $response = $this->categoryRepository->getOne($categoryId);
+        $response = $this->categoryRepository->getOne($id);
         if ($response == null) {
           $this->setResponseCode(HttpHelper::$STATUS_NOTFOUND);
           $response = new ApiError("Category not found");
@@ -62,9 +62,9 @@ class CategoriesController extends ApiController
 
   /**
    * POST /api/category - add a new category
-   * @return mixed|void
+   * @return void
    */
-  public function doPost()
+  public function doPost(): void
   {
     $category = $this->loadEntity(Category::class);
 
@@ -84,18 +84,18 @@ class CategoriesController extends ApiController
 
   /**
    * PUT /api/category/:id - update a category
-   * @param int $categoryId Category id to update
-   * @return mixed|void
+   * @param int $id Category id to update
+   * @return void
    * @throws Exception
    */
-  public function doPut($categoryId)
+  public function doPut($id): void
   {
-    $category = $this->categoryRepository->getOne($categoryId);
+    $category = $this->categoryRepository->getOne($id);
 
     if ($category != null) {
       $rows = 0;
       $updatedCategory = $this->loadEntity(Category::class);
-      Tools::setProperty($updatedCategory, "categoryId", $categoryId);
+      Tools::setProperty($updatedCategory, "categoryId", $id);
 
       try {
         $rows = $this->categoryRepository->save($updatedCategory);
@@ -117,13 +117,13 @@ class CategoriesController extends ApiController
 
   /**
    * DELETE /api/category/:id
-   * @param int $categoryId Category id to delete
-   * @return mixed|void
+   * @param int $id Category id to delete
+   * @return void
    * @throws Exception
    */
-  public function doDelete($categoryId)
+  public function doDelete($id): void
   {
-    $category = $this->categoryRepository->getOne($categoryId);
+    $category = $this->categoryRepository->getOne($id);
 
     if ($category != null) {
       $rows = 0;
