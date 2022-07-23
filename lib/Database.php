@@ -17,7 +17,7 @@ class Database
 {
 
   /**
-   * @var PDO $pdo
+   * @var PDO|null $pdo
    */
   private static ?PDO $pdo = null;
 
@@ -30,7 +30,7 @@ class Database
 
   /**
    * Return a PDO connection
-   * @return PDO
+   * @return PDO|null
    * @throws Exception
    */
   public static function getPDO(): ?PDO
@@ -132,7 +132,7 @@ class Database
    * @param bool $isNew
    * @return object
    */
-  public static function hydrate(object $entity, array $data, $isNew = false): object
+  public static function hydrate(object $entity, array $data, bool $isNew = false): object
   {
     $data["new"] = $isNew;
 
@@ -148,7 +148,7 @@ class Database
    * Get a single entity
    * @param PDOStatement $stmt
    * @param string $className
-   * @return object
+   * @return object|null
    */
   public static function fetchEntity(PDOStatement $stmt, string $className) : ?object
   {
@@ -187,7 +187,7 @@ class Database
     $data = [];
     foreach (get_class_methods($entity) as $accessor)
     {
-      if (substr($accessor, 0, 3) == "get") {
+      if (str_starts_with($accessor, "get")) {
         $column = Tools::snakeCase(substr($accessor, 3));
         $data[$column] = $entity->$accessor();
       }
@@ -201,7 +201,7 @@ class Database
    * @return bool|PDOStatement
    * @throws Exception
    */
-  public static function createMigrationsTable(string $table)
+  public static function createMigrationsTable(string $table): bool|PDOStatement
   {
     $migrations = new SchemaBuilder($table);
     $migrations
@@ -263,9 +263,8 @@ class Database
       }
 
       // build the list of migrations to execute
-      $migrationsList = [];
       foreach ($migrations as $migration) {
-        if (substr($migration, -4) == ".php") {
+        if (str_ends_with($migration, ".php")) {
           if (!in_array($migration, $executedMigrations)) {
             $migrationClass = "app\\migrations\\" . str_replace(".php", "", $migration);
             $migrationsList[$migration] = new $migrationClass();
@@ -294,7 +293,7 @@ class Database
     foreach ($migrationsList as $migrationName => $migrationInstance) {
       $migration = $migrationInstance->getDescription();
       $result = $migrationInstance->execute();
-      if ($result == true) {
+      if ($result) {
         $qb = new QueryBuilder($config["System"]["MigrationsTable"]);
         $qb->insert([
           "migration_name" => $migrationName,
