@@ -105,27 +105,27 @@ abstract class ApiController
    * GET /api/entity - returns all entities
    * GET /api/entity/:id - returns one entity
    * @param mixed|null $id Record identifier to return
-   * @return mixed
+   * @return void
    */
-  abstract public function doGet(mixed $id = null): mixed;
+  abstract public function doGet(mixed $id = null): void;
 
   /**
    * POST /api/entity - add a new entity
-   * @return mixed
+   * @return void
    */
-  abstract public function doPost(): mixed;
+  abstract public function doPost(): void;
 
   /**
    * PUT /api/entity/:id - update an entity
    * @param $id
-   * @return mixed
+   * @return void
    */
-  abstract public function doPut($id): mixed;
+  abstract public function doPut($id): void;
 
   /**
    * DELETE /api/entity/:id - delete an entity
    * @param $id
-   * @return mixed
+   * @return void
    */
-  abstract public function doDelete($id): mixed;
+  abstract public function doDelete($id): void;
 }
