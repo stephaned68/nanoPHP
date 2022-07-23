@@ -53,9 +53,9 @@ abstract class WebController
 
   /**
    * @param string $name Query string parameter to retrieve
-   * @return mixed|null
+   * @return mixed
    */
-  public function getQueryParam(string $name)
+  public function getQueryParam(string $name): mixed
   {
     return $this->queryParams[$name] ?? null;
   }
@@ -80,9 +80,9 @@ abstract class WebController
 
   /**
    * @param string $name POST field to retrieve
-   * @return mixed|null
+   * @return mixed
    */
-  public function getPostField(string $name)
+  public function getPostField(string $name): mixed
   {
     return $this->postData[$name] ?? null;
   }
