@@ -16,7 +16,7 @@ class FormField
   private ?string $name;
 
   /**
-   * @var string
+   * @var string|null
    */
   private ?string $label;
 
@@ -181,7 +181,7 @@ class FormField
   /**
    * @return mixed
    */
-  public function getDefaultValue()
+  public function getDefaultValue(): mixed
   {
     return $this->defaultValue;
   }
@@ -190,7 +190,7 @@ class FormField
    * @param mixed $defaultValue
    * @return FormField
    */
-  public function setDefaultValue($defaultValue): FormField
+  public function setDefaultValue(mixed $defaultValue): FormField
   {
     $this->defaultValue = $defaultValue;
     return $this;
@@ -307,7 +307,7 @@ class FormField
   /**
    * Render the field's HTML
    * @param $data
-   * @return false|string
+   * @return string
    */
   public function render($data): string
   {
