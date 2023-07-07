@@ -32,6 +32,24 @@ class CategoryController extends WebController
   {
     if ($categoryRepository != null && is_subclass_of($categoryRepository, BaseRepository::class))
       $this->categoryRepository = $categoryRepository;
+
+    $this->form = new FormManager();
+    $this->form
+      ->setTitle("Maintenance des catégories")
+      ->addField([
+        "name" => "categoryId",
+        "filter" => FILTER_VALIDATE_INT,
+        "controlType" => "hidden"
+      ])
+      ->addField([
+        "name" => "categoryName",
+        "label" => "Nom de la catégorie",
+        "filter" => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+        "required" => true
+      ])
+      ->setIndexRoute(Router::route([ "category", "index" ]))
+    ;
+
   }
 
   /**
@@ -60,7 +78,7 @@ class CategoryController extends WebController
    */
   public function newAction() : void
   {
-    $this->editAction();
+    $this->editAction(0);
   }
 
   /**
@@ -72,42 +90,40 @@ class CategoryController extends WebController
    */
   public function editAction(?int $categoryId = null) : void
   {
-    $form = new FormManager();
-    $form
-      ->setTitle("Maintenance des catégories")
-      ->addField([
-        "name" => "categoryId",
-        "filter" => FILTER_VALIDATE_INT,
-        "controlType" => "hidden"
-      ])
-      ->addField([
-        "name" => "categoryName",
-        "label" => "Nom de la catégorie",
-        "filter" => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
-        "required" => true
-      ])
-      ->setIndexRoute(Router::route([ "category", "index" ]))
-      ->setDeleteRoute(Router::route([ "category", "delete", $categoryId ]))
-    ;
+    $form = $this->form;
+    if ($categoryId !== 0)
+      $form->setDeleteRoute(Router::route([ "category", "delete", $categoryId ]));
 
     $category = null;
     if ($categoryId != null) {
       $category = $this->categoryRepository->getOne($categoryId);
     }
 
+    $this->render("category/edit", compact([
+      "form",
+      "category"
+    ]));
+  }
+
+  /**
+   * @throws Exception
+   */
+  public function editPostAction() : void
+  {
     if (FormManager::isSubmitted()) {
-      if (!$form->checkCSRFToken()) {
-        $form->handleCSRF();
-        Router::redirectTo([ "category", "index" ]);
+      if (! FormManager::checkCSRFToken()) {
+        FormManager::handleCSRF();
+        Router::redirectTo(["category", "index"]);
         return;
       }
-      if (!$form->isValid()) {
-        Tools::setFlash($form->checkForm(), "warning");
+      $category = $this->form->getEntity(Category::class);
+      $categoryId = $category->getCategoryId();
+      if (!$this->form->isValid()) {
+        Tools::setFlash($this->form->checkForm(), "warning");
         Router::redirectTo([ "category", "edit", $categoryId ]);
         return;
       }
       else {
-        $category = $form->getEntity(Category::class);
         $rows = $this->categoryRepository->save($category);
         if ($rows > 0)
           Tools::setFlash("La catégorie a été enregistrée avec succès", "success");
@@ -116,13 +132,9 @@ class CategoryController extends WebController
           return;
         }
         $category = null;
+        Router::redirectTo([ "category", "new" ]);
       }
     }
-
-    $this->render("category/edit", compact([
-      "form",
-      "category"
-    ]));
   }
 
   /**

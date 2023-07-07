@@ -9,6 +9,7 @@ use framework\App;
 define("ROOT_PATH", dirname(__DIR__));
 const MODELS_PATH = ROOT_PATH . "/app/models";
 const VIEWS_PATH = ROOT_PATH . "/app/views";
+const COMPONENTS_PATH = ROOT_PATH . "/app/components";
 const CONTROLLERS_PATH = ROOT_PATH . "/app/controllers";
 const CONFIG_PATH = ROOT_PATH . "/config";
 const DATA_PATH = ROOT_PATH . "/data";

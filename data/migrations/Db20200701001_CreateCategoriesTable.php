@@ -24,9 +24,9 @@ class Db20200701001_CreateCategoriesTable implements MigrationInterface
 
   /**
    * Execute migration
-   * @return bool|mixed
+   * @return mixed
    */
-  public function Execute()
+  public function execute() : mixed
   {
     $categories = new SchemaBuilder("categories");
     $categories

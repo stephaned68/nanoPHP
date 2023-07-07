@@ -29,12 +29,14 @@ class Dispatcher
    * Call the action method on the controller
    * @throws Exception
    */
-  public function run()
+  public function run(): void
   {
     $controllerClass = "app\\controllers\\" . $this->router->getControllerName();
     $repositoryClass = "app\\models\\" . $this->router->getRepositoryName();
 
     $action = $this->router->getActionName(); // e.g. indexAction()
+    $actionVerb = $this->router->getActionVerbName(); // e.g. productPostAction()
+    $apiAction = $this->router->getApiActionName(); // e.g. processDelete()
 
     // if URL is /api/entity
     if ($action == "api")
@@ -63,11 +65,14 @@ class Dispatcher
       $controllerInstance->setQueryParams($this->router->getQueryParams());
     }
 
-    // Method is either <functionName>Action or do<httpVerb>
+    // Method is either <functionName>Action or process<httpVerb>
     if ($action == "api") {
-      $method = "do" . ucfirst($_SERVER["REQUEST_METHOD"]);
-      if (method_exists($controllerInstance, $method)) {
-        $action = $method;
+      if (method_exists($controllerInstance, $apiAction)) {
+        $action = $apiAction;
+      }
+    } else {
+      if (method_exists($controllerInstance, $actionVerb)) {
+        $action = $actionVerb;
       }
     }
 

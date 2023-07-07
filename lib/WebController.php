@@ -2,7 +2,6 @@
 
 namespace framework;
 
-
 /**
  * Base functionality for a web controller
  * Class WebController
@@ -10,6 +9,11 @@ namespace framework;
  */
 abstract class WebController
 {
+  /**
+   * @var FormManager
+   */
+  protected FormManager $form;
+
   /**
    * @var View View engine
    */
@@ -102,7 +106,7 @@ abstract class WebController
    * @param string $template Template name to render
    * @param array $data
    */
-  protected function render(string $template, array $data = [])
+  protected function render(string $template, array $data = []): void
   {
     echo $this->view->render($template, $data);
   }

@@ -138,7 +138,7 @@ if (isset($migrations)) {
 
 <script src="/scripts/utils.js"></script>
 
-<?php if (isset($script) && !empty($script)) : ?>
+<?php if (!empty($script)) : ?>
 <script>
   <?php include $script ?>
 </script>

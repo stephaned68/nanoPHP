@@ -59,18 +59,12 @@ class App
     define("DB_NAME", $this->config["Database"]["Name"]);
 
     // define the database connection string for PDO
-    $dsn = "";
-    switch ($this->config["Database"]["Type"]) {
-      case "mysql":
-        $dsn = "mysql:host=" . DB_SERVER . ";port=" . (DB_PORT ?? "3306") . ";dbname=" . DB_NAME . ";charset=utf8mb4";
-        break;
-      case "pgsql":
-        $dsn = "pgsql:host=" . DB_SERVER . ";port=" . (DB_PORT ?? "5432") . ";dbname=" . DB_NAME;
-        break;
-      case "sqlite":
-        $dsn = "sqlite:" . DATA_PATH . DIRECTORY_SEPARATOR . DB_NAME;
-        break;
-    }
+    $dsn = match ($this->config["Database"]["Type"]) {
+      "mysql" => "mysql:host=" . DB_SERVER . ";port=" . (DB_PORT ?? "3306") . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+      "pgsql" => "pgsql:host=" . DB_SERVER . ";port=" . (DB_PORT ?? "5432") . ";dbname=" . DB_NAME,
+      "sqlite" => "sqlite:" . DATA_PATH . DIRECTORY_SEPARATOR . DB_NAME,
+      default => "",
+    };
 
     // define the database DSN
     define("DSN", $dsn);
@@ -136,7 +130,7 @@ class App
         "Database" => [
           "Type" => "mysql",
           "Server" => "localhost",
-          "Name" => "simple-fw", // set the full pathname of the .db file for SQLite
+          "Name" => "nanophp", // set the full pathname of the .db file for SQLite
           "User" => "root",
           "Password" => ""
         ]

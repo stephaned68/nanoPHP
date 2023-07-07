@@ -40,7 +40,7 @@ class CategoriesController extends ApiController
    * @return void
    * @throws Exception
    */
-  public function doGet(mixed $id = null): void
+  public function processGet(mixed $id = null): void
   {
     if ($id == null) {
       $response = $this->categoryRepository->getAll();
@@ -64,7 +64,7 @@ class CategoriesController extends ApiController
    * POST /api/category - add a new category
    * @return void
    */
-  public function doPost(): void
+  public function processPost(): void
   {
     $category = $this->loadEntity(Category::class);
 
@@ -84,11 +84,11 @@ class CategoriesController extends ApiController
 
   /**
    * PUT /api/category/:id - update a category
-   * @param int $id Category id to update
+   * @param mixed $id Category id to update
    * @return void
    * @throws Exception
    */
-  public function doPut($id): void
+  public function processPut(mixed $id): void
   {
     $category = $this->categoryRepository->getOne($id);
 
@@ -117,11 +117,11 @@ class CategoriesController extends ApiController
 
   /**
    * DELETE /api/category/:id
-   * @param int $id Category id to delete
+   * @param mixed $id Category id to delete
    * @return void
    * @throws Exception
    */
-  public function doDelete($id): void
+  public function processDelete(mixed $id): void
   {
     $category = $this->categoryRepository->getOne($id);
 

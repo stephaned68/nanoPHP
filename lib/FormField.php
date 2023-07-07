@@ -67,43 +67,12 @@ class FormField
 
   /**
    * FormField constructor.
-   * @param string|null $name
-   * @param string|null $label
-   * @param int $filter
-   * @param bool $required
-   * @param mixed $defaultValue
-   * @param string|null $errorMessage
-   * @param string|null $controlType
-   * @param string|null $cssClass
-   * @param bool $primeKey
-   * @param array $valueList
-   * @param array $size
+   * @param array $options
    */
-  public function __construct(
-    ?string $name = null,
-    ?string $label = null,
-    int $filter = 0,
-    bool $required = false,
-    ?string $defaultValue = null,
-    ?string $errorMessage = null,
-    ?string $controlType = null,
-    ?string $cssClass = null,
-    bool $primeKey = false,
-    array $valueList = [],
-    array $size = []
-  )
-  {
-    $this->name = $name;
-    $this->label = $label;
-    $this->filter = $filter;
-    $this->required = $required;
-    $this->defaultValue = $defaultValue;
-    $this->errorMessage = $errorMessage;
-    $this->controlType = $controlType;
-    $this->cssClass = $cssClass;
-    $this->primeKey = $primeKey;
-    $this->valueList = $valueList;
-    $this->size = $size;
+  public function __construct(array $options) {
+    foreach ($options as $k => $v) {
+      $this->$k = $v;
+    }
   }
 
   /**
@@ -336,12 +305,15 @@ class FormField
 
     extract($options);
 
-    if ($this->controlType === "select"
+    if (
+      $this->controlType === "select"
       || $this->controlType === "textarea"
-      || $this->controlType === "checkbox") {
-      require VIEWS_PATH . "/_fragments/form-{$this->controlType}.phtml";
+      || $this->controlType === "checkbox"
+    ) {
+      $component = COMPONENTS_PATH .  "/form-{$this->controlType}.html.php";
+      require $component;
     } else {
-      require VIEWS_PATH . "/_fragments/form-group.phtml";
+      require COMPONENTS_PATH . "/form-group.html.php";
     }
 
     return ob_get_clean();
@@ -361,4 +333,5 @@ class FormField
 
     return $defaultCSS[$controlType] ?? "form-control";
   }
+
 }

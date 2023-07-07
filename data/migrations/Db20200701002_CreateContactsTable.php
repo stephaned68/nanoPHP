@@ -26,9 +26,10 @@ class Db20200701002_CreateContactsTable implements MigrationInterface
 
   /**
    * Execute migration
-   * @return bool|mixed
+   * @return bool
+   * @throws \Exception
    */
-  public function execute()
+  public function execute() : mixed
   {
     $contacts = new SchemaBuilder("contacts");
     $contacts

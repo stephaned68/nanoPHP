@@ -30,6 +30,16 @@ class Router
   private string $actionName = "indexAction";
 
   /**
+   * @var string
+   */
+  private string $actionVerbName = "indexGetAction";
+
+  /**
+   * @var string
+   */
+  private string $apiActionName = "processGet";
+
+  /**
    * @var array
    */
   private array $actionParameters = [];
@@ -57,38 +67,42 @@ class Router
   {
     $this->route = $route;
 
-    $routeParts = explode("/", $route);
+    $routeSegments = explode("/", $route);
 
     // check if URL is like /api/...
-    if (count($routeParts) > 0 && !empty(trim($routeParts[0]))) {
-      if (strtolower($routeParts[0]) == "api") {
-        array_shift($routeParts);
+    if (count($routeSegments) > 0 && !empty(trim($routeSegments[0]))) {
+      if (strtolower($routeSegments[0]) == "api") {
+        array_shift($routeSegments);
         $this->actionName = "api";
       }
     }
 
     // get entity part (/entity/action or /api/entity)
-    if (count($routeParts) > 0 && !empty(trim($routeParts[0]))) {
-      $entity = Tools::pascalize(array_shift($routeParts));
+    if (count($routeSegments) > 0 && !empty(trim($routeSegments[0]))) {
+      $entity = Tools::pascalize(array_shift($routeSegments));
       $this->controllerName = $entity . "Controller";
       $this->apiController = Tools::pluralize($entity) . "Controller";
       $this->repositoryName = $entity . "Repository";
     }
 
     // get action part (/entity/action)
+    $verb = ucfirst($_SERVER["REQUEST_METHOD"]);
     if ($this->actionName != "api") {
-      if (count($routeParts) > 0 && !empty(trim($routeParts[0]))) {
-        $action = array_shift($routeParts);
-        $this->actionName = Tools::camelize($action) . "Action";
+      if (count($routeSegments) > 0 && !empty(trim($routeSegments[0]))) {
+        $action = Tools::camelize(array_shift($routeSegments));
+        $this->actionName = $action . "Action";
+        $this->actionVerbName = $action . $verb . "Action";
       }
+    } else {
+      $this->apiActionName = "process" . $verb;
     }
 
     // get action parameters (/entity/action/.../...)
-    if (count($routeParts) > 0 && !empty(trim($routeParts[0]))) {
+    if (count($routeSegments) > 0 && !empty(trim($routeSegments[0]))) {
       array_map(function ($item) {
         return urldecode($item);
-      }, $routeParts);
-      $this->actionParameters = $routeParts;
+      }, $routeSegments);
+      $this->actionParameters = $routeSegments;
     }
 
     // check if URL is like index.php?route=/entity/action/...
@@ -131,6 +145,22 @@ class Router
   public function getActionName(): string
   {
     return $this->actionName;
+  }
+
+  /**
+   * @return string
+   */
+  public function getActionVerbName(): string
+  {
+    return $this->actionVerbName;
+  }
+
+  /**
+   * @return string
+   */
+  public function getApiActionName(): string
+  {
+    return $this->apiActionName;
   }
 
   /**

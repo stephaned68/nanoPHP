@@ -141,10 +141,7 @@ class FormManager
       $props["valueList"] = $props["valueList"] ?? [];
       $props["size"] = $props["size"] ?? [];
 
-      $field = new FormField();
-      foreach ($props as $propK => $propV) {
-        Tools::setProperty($field, $propK, $propV);
-      }
+      $field = new FormField($props);
 
       $this->formFields[$props["name"]] = $field;
     }
@@ -166,7 +163,7 @@ class FormManager
    *
    * @return bool
    */
-  public function checkCSRFToken(): bool
+  public static function checkCSRFToken(): bool
   {
     $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     if (!$token || $token !== $_SESSION['token'])
@@ -177,7 +174,7 @@ class FormManager
   /**
    * Handler CSRF
    */
-  public function handleCSRF() : void
+  public static function handleCSRF() : void
   {
     Tools::setFlash("Erreur d'envoi de formulaire", "danger");
     header($_SERVER['SERVER_PROTOCOL'] . ' '. HttpHelper::$METHOD_NOTALLOWED . ' ' . 'Method Not Allowed');
@@ -275,7 +272,7 @@ class FormManager
     $_SESSION['token'] = Tools::getToken();
     ob_start();
 
-    require VIEWS_PATH . "/_fragments/form-csrf.phtml";
+    require COMPONENTS_PATH . "/form-csrf.html.php";
 
     return ob_get_clean();
   }
@@ -344,7 +341,7 @@ class FormManager
 
     extract($options);
 
-    require VIEWS_PATH . "/_fragments/form-buttons.phtml";
+    require COMPONENTS_PATH . "/form-buttons.html.php";
 
     return ob_get_clean();
 

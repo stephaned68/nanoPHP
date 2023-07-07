@@ -6,7 +6,7 @@
   "Database": {
     "Type": "mysql",
     "Server": "localhost",
-    "Name": "simple-fw",
+    "Name": "nanophp",
     "User": "root",
     "Password": ""
   },
@@ -18,21 +18,21 @@
   "db.mysql": {
     "Type": "mysql",
     "Server": "localhost",
-    "Name": "simple-fw",
+    "Name": "nanophp",
     "User": "root",
     "Password": ""
   },
 
   "db.sqlite": {
     "Type": "sqlite",
-    "Name": "simple-fw.db"
+    "Name": "nanophp.db"
   },
 
   "db.postgres": {
     "Type": "pgsql",
     "Server": "localhost",
     "Port": 5432,
-    "Name": "simple-fw",
+    "Name": "nanophp",
     "User": "postgres",
     "Password": "F0rty!tw0"
   }
